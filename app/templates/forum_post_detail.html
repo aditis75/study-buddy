@@ -1,104 +1,497 @@
 {% extends "base.html" %}
 
+{% block title %}{{ post.title }} | Study Buddy{% endblock %}
+
 {% block content %}
 
-<p>
-    <a href="{{ url_for('forum.list_posts') }}">
-        ← Back to Forum
-    </a>
-</p>
+<!-- HEADER -->
 
-<hr>
+<div class="page-header">
 
-<h2>{{ post.title }}</h2>
+    <div>
 
-<p>
-    <strong>Posted by:</strong>
+        <a
+            href="{{ url_for('forum.list_posts') }}"
+            style="
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                margin-bottom: 10px;
+                color: var(--muted);
+                font-size: 12px;
+                font-weight: 600;
+            "
+        >
+            <i class="fa-solid fa-arrow-left"></i>
+            Back to Discussion Forum
+        </a>
 
-    {% if author %}
-        {{ author.name }}
-    {% else %}
-        Unknown Student
-    {% endif %}
-</p>
 
-<p>
-    {{ post.content }}
-</p>
+        <h1
+            class="page-title"
+            style="max-width: 800px;"
+        >
+            {{ post.title }}
+        </h1>
 
-<p>
-    <small>
-        Posted: {{ post.created_at }}
-    </small>
-</p>
 
-<hr>
+        <p class="page-subtitle">
+            Community discussion
+        </p>
 
-<h3>Comments</h3>
+    </div>
 
-{% if comments %}
 
-    {% for comment in comments %}
+    <span class="badge badge-blue">
+        <i class="fa-regular fa-comments"></i>
 
-        <div style="
-            border-left: 3px solid #ccc;
-            padding: 10px 15px;
-            margin-bottom: 15px;
-        ">
+        {{ comments|length }}
 
-            <p>
-                <strong>
-                    {% if users.get(comment.user_id) %}
-                        {{ users[comment.user_id].name }}
+        repl{% if comments|length == 1 %}y{% else %}ies{% endif %}
+    </span>
+
+</div>
+
+
+<div style="
+    display: grid;
+    grid-template-columns: minmax(0, 1.7fr) minmax(280px, .7fr);
+    gap: 22px;
+">
+
+
+    <!-- LEFT SIDE -->
+
+    <div>
+
+
+        <!-- ORIGINAL POST -->
+
+        <div
+            class="card"
+            style="margin-bottom: 22px;"
+        >
+
+            <!-- AUTHOR -->
+
+            <div style="
+                display: flex;
+                align-items: center;
+                gap: 13px;
+                padding-bottom: 16px;
+                margin-bottom: 18px;
+                border-bottom: 1px solid var(--border);
+            ">
+
+
+                <div style="
+                    width: 47px;
+                    height: 47px;
+                    min-width: 47px;
+                    border-radius: 14px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background: linear-gradient(
+                        135deg,
+                        var(--primary),
+                        var(--blue)
+                    );
+                    color: white;
+                    font-size: 17px;
+                    font-weight: 800;
+                ">
+
+                    {% if author %}
+                        {{ author.name[0]|upper }}
                     {% else %}
-                        Unknown Student
+                        S
                     {% endif %}
-                </strong>
-            </p>
 
-            <p>
-                {{ comment.content }}
-            </p>
+                </div>
 
-            <small>
-                {{ comment.created_at }}
-            </small>
+
+                <div style="flex: 1;">
+
+                    <strong style="
+                        display: block;
+                        font-size: 14px;
+                    ">
+
+                        {% if author %}
+                            {{ author.name }}
+                        {% else %}
+                            Unknown Student
+                        {% endif %}
+
+                    </strong>
+
+
+                    <span class="card-muted">
+
+                        {% if author %}
+
+                            {{ author.department or "Student" }}
+
+                            {% if author.year %}
+                                • Year {{ author.year }}
+                            {% endif %}
+
+                        {% else %}
+
+                            Study Buddy Community
+
+                        {% endif %}
+
+                    </span>
+
+                </div>
+
+
+                <div style="text-align: right;">
+
+                    <span class="badge">
+                        Original Post
+                    </span>
+
+                    <div
+                        class="card-muted"
+                        style="margin-top: 5px;"
+                    >
+                        {{ post.created_at.strftime('%d %b %Y, %I:%M %p') }}
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- CONTENT -->
+
+            <h2 style="
+                font-size: 20px;
+                margin-bottom: 13px;
+            ">
+                {{ post.title }}
+            </h2>
+
+
+            <div style="
+                font-size: 14px;
+                line-height: 1.8;
+                white-space: pre-wrap;
+            ">{{ post.content }}</div>
 
         </div>
 
-    {% endfor %}
 
-{% else %}
+        <!-- REPLIES -->
 
-    <p>
-        No comments yet. Be the first to reply.
-    </p>
+        <div class="card">
 
-{% endif %}
+            <div class="section-header">
 
-<hr>
+                <div>
 
-<h3>Add a Comment</h3>
+                    <h2 class="section-title">
+                        <i
+                            class="fa-regular fa-comments"
+                            style="color: var(--primary);"
+                        ></i>
+                        Discussion
+                    </h2>
 
-<form
-    method="POST"
-    action="{{ url_for('forum.add_comment', post_id=post.id) }}"
->
+                    <span class="card-muted">
 
-    <textarea
-        name="content"
-        rows="4"
-        placeholder="Write your reply..."
-        required
-        style="width: 100%; max-width: 600px;"
-    ></textarea>
+                        {{ comments|length }}
 
-    <br><br>
+                        student
+                        repl{% if comments|length == 1 %}y{% else %}ies{% endif %}
 
-    <button type="submit">
-        Add Comment
-    </button>
+                    </span>
 
-</form>
+                </div>
+
+            </div>
+
+
+            {% if comments %}
+
+                <div style="display: grid; gap: 13px;">
+
+                {% for comment in comments %}
+
+                    {% set comment_user = users.get(comment.user_id) %}
+
+                    <div style="
+                        display: flex;
+                        align-items: flex-start;
+                        gap: 12px;
+                        padding: 15px;
+                        border-radius: 13px;
+                        background: var(--surface-soft);
+                        border: 1px solid var(--border);
+                    ">
+
+
+                        <!-- AVATAR -->
+
+                        <div style="
+                            width: 38px;
+                            height: 38px;
+                            min-width: 38px;
+                            border-radius: 11px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            background: var(--primary-soft);
+                            color: var(--primary);
+                            font-size: 13px;
+                            font-weight: 800;
+                        ">
+
+                            {% if comment_user %}
+                                {{ comment_user.name[0]|upper }}
+                            {% else %}
+                                S
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- COMMENT -->
+
+                        <div style="flex: 1;">
+
+                            <div style="
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                                gap: 10px;
+                                margin-bottom: 7px;
+                            ">
+
+                                <div>
+
+                                    <strong style="
+                                        display: block;
+                                        font-size: 12px;
+                                    ">
+
+                                        {% if comment_user %}
+                                            {{ comment_user.name }}
+                                        {% else %}
+                                            Unknown Student
+                                        {% endif %}
+
+                                    </strong>
+
+
+                                    {% if comment_user %}
+
+                                        <span class="card-muted">
+                                            {{ comment_user.department or "Student" }}
+
+                                            {% if comment_user.year %}
+                                                • Year {{ comment_user.year }}
+                                            {% endif %}
+                                        </span>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <span
+                                    class="card-muted"
+                                    style="font-size: 10px;"
+                                >
+                                    {{ comment.created_at.strftime('%d %b %Y, %I:%M %p') }}
+                                </span>
+
+                            </div>
+
+
+                            <div style="
+                                font-size: 13px;
+                                line-height: 1.7;
+                                white-space: pre-wrap;
+                            ">{{ comment.content }}</div>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+                </div>
+
+
+            {% else %}
+
+                <div style="
+                    padding: 28px;
+                    text-align: center;
+                    border-radius: 12px;
+                    background: var(--surface-soft);
+                ">
+
+                    <i
+                        class="fa-regular fa-message"
+                        style="
+                            font-size: 25px;
+                            color: var(--muted);
+                            margin-bottom: 10px;
+                        "
+                    ></i>
+
+                    <strong style="display: block;">
+                        No replies yet
+                    </strong>
+
+                    <span class="card-muted">
+                        Be the first student to contribute to this discussion.
+                    </span>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- RIGHT SIDE -->
+
+    <div>
+
+
+        <!-- ADD COMMENT -->
+
+        <div
+            class="card"
+            style="margin-bottom: 20px;"
+        >
+
+            <div class="stat-icon" style="margin-bottom: 13px;">
+                <i class="fa-solid fa-reply"></i>
+            </div>
+
+            <h3 style="
+                font-size: 17px;
+                margin-bottom: 5px;
+            ">
+                Join the Discussion
+            </h3>
+
+            <p class="card-muted">
+                Share an explanation, suggestion or useful insight.
+            </p>
+
+
+            <form
+                method="POST"
+                action="{{ url_for('forum.add_comment', post_id=post.id) }}"
+            >
+
+                <div class="form-group">
+
+                    <textarea
+                        name="content"
+                        placeholder="Write your reply..."
+                        required
+                        style="min-height: 125px;"
+                    ></textarea>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn"
+                    style="width: 100%;"
+                >
+                    <i class="fa-solid fa-paper-plane"></i>
+                    Post Reply
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- COMMUNITY GUIDELINES -->
+
+        <div class="card">
+
+            <h3 class="card-title">
+                <i
+                    class="fa-solid fa-people-group"
+                    style="color: var(--primary);"
+                ></i>
+                Community Guidelines
+            </h3>
+
+
+            <div style="
+                display: grid;
+                gap: 13px;
+                margin-top: 17px;
+                font-size: 12px;
+                color: var(--muted);
+            ">
+
+                <div>
+                    <i
+                        class="fa-solid fa-check"
+                        style="
+                            color: var(--success);
+                            width: 20px;
+                        "
+                    ></i>
+                    Keep replies helpful and relevant.
+                </div>
+
+                <div>
+                    <i
+                        class="fa-solid fa-check"
+                        style="
+                            color: var(--success);
+                            width: 20px;
+                        "
+                    ></i>
+                    Explain concepts instead of only giving answers.
+                </div>
+
+                <div>
+                    <i
+                        class="fa-solid fa-check"
+                        style="
+                            color: var(--success);
+                            width: 20px;
+                        "
+                    ></i>
+                    Respect other students and viewpoints.
+                </div>
+
+                <div>
+                    <i
+                        class="fa-solid fa-check"
+                        style="
+                            color: var(--success);
+                            width: 20px;
+                        "
+                    ></i>
+                    Keep discussions focused on learning.
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 
 {% endblock %}

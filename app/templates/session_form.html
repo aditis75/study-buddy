@@ -1,13 +1,253 @@
 {% extends "base.html" %}
-{% block title %}Study Session{% endblock %}
+
+{% block title %}
+{{ "Edit Session" if session else "Create Session" }} | Study Buddy
+{% endblock %}
+
 {% block content %}
-<h2>{{ "Edit" if session else "Create" }} Study Session</h2>
-<form method="post">
-  <input class="form-control mb-3" name="subject" value="{{ session.subject if session else '' }}" placeholder="Subject" required>
-  <input class="form-control mb-3" name="date" value="{{ session.date if session else '' }}" placeholder="Date" required>
-  <input class="form-control mb-3" name="time" value="{{ session.time if session else '' }}" placeholder="Time" required>
-  <input class="form-control mb-3" name="venue" value="{{ session.venue if session else '' }}" placeholder="Venue" required>
-  <input class="form-control mb-3" name="max_participants" type="number" min="2" value="{{ session.max_participants if session else 5 }}" placeholder="Maximum participants" required>
-  <button class="btn btn-primary">Save</button>
-</form>
+
+<div class="page-header">
+
+    <div>
+        <h1 class="page-title">
+            {{ "Edit Study Session" if session else "Create a Study Session" }}
+        </h1>
+
+        <p class="page-subtitle">
+            {{ "Update your session details." if session else
+               "Bring students together for focused collaborative learning." }}
+        </p>
+    </div>
+
+    <a
+        href="{{ url_for('study_sessions.list_sessions') }}"
+        class="btn btn-secondary"
+    >
+        <i class="fa-solid fa-arrow-left"></i>
+        Back to Sessions
+    </a>
+
+</div>
+
+
+<div style="
+    display: grid;
+    grid-template-columns: minmax(0, 1.7fr) minmax(260px, .7fr);
+    gap: 22px;
+">
+
+    <!-- FORM -->
+
+    <div class="card">
+
+        <div style="
+            display: flex;
+            gap: 13px;
+            align-items: center;
+            margin-bottom: 25px;
+        ">
+
+            <div class="stat-icon">
+                <i class="fa-solid fa-calendar-plus"></i>
+            </div>
+
+            <div>
+                <h2 class="card-title" style="margin: 0;">
+                    Session Details
+                </h2>
+
+                <span class="card-muted">
+                    Add the essential information students need.
+                </span>
+            </div>
+
+        </div>
+
+
+        <form method="post">
+
+            <div class="form-group">
+                <label>
+                    <i class="fa-solid fa-book"></i>
+                    Subject / Topic
+                </label>
+
+                <input
+                    name="subject"
+                    value="{{ session.subject if session else '' }}"
+                    placeholder="e.g. DBMS Normalization"
+                    required
+                >
+            </div>
+
+
+            <div class="grid grid-2">
+
+                <div class="form-group">
+                    <label>
+                        <i class="fa-regular fa-calendar"></i>
+                        Date
+                    </label>
+
+                    <input
+                        name="date"
+                        type="date"
+                        value="{{ session.date if session else '' }}"
+                        required
+                    >
+                </div>
+
+
+                <div class="form-group">
+                    <label>
+                        <i class="fa-regular fa-clock"></i>
+                        Time
+                    </label>
+
+                    <input
+                        name="time"
+                        type="time"
+                        value="{{ session.time if session else '' }}"
+                        required
+                    >
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+                <label>
+                    <i class="fa-solid fa-location-dot"></i>
+                    Venue
+                </label>
+
+                <input
+                    name="venue"
+                    value="{{ session.venue if session else '' }}"
+                    placeholder="e.g. Library Discussion Room 2"
+                    required
+                >
+            </div>
+
+
+            <div class="form-group">
+                <label>
+                    <i class="fa-solid fa-users"></i>
+                    Maximum Participants
+                </label>
+
+                <input
+                    name="max_participants"
+                    type="number"
+                    min="2"
+                    value="{{ session.max_participants if session else 5 }}"
+                    required
+                >
+
+                <span style="
+                    display: block;
+                    margin-top: 6px;
+                    color: var(--muted);
+                    font-size: 11px;
+                ">
+                    Keep groups focused by choosing an appropriate session size.
+                </span>
+            </div>
+
+
+            <div style="
+                display: flex;
+                justify-content: flex-end;
+                gap: 10px;
+                margin-top: 8px;
+            ">
+
+                <a
+                    href="{{ url_for('study_sessions.list_sessions') }}"
+                    class="btn btn-secondary"
+                >
+                    Cancel
+                </a>
+
+                <button type="submit" class="btn">
+                    <i class="fa-solid fa-check"></i>
+                    {{ "Save Changes" if session else "Create Session" }}
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- INFO PANEL -->
+
+    <div>
+
+        <div class="card" style="
+            background: linear-gradient(145deg, #171d38, #30286c);
+            border: none;
+            color: white;
+        ">
+
+            <div style="
+                width: 45px;
+                height: 45px;
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(255,255,255,.10);
+                margin-bottom: 17px;
+            ">
+                <i class="fa-solid fa-lightbulb"></i>
+            </div>
+
+            <h3 style="color: white; font-size: 17px;">
+                Make it a great session
+            </h3>
+
+            <p style="
+                color: #c5cadb;
+                font-size: 12px;
+                margin-bottom: 18px;
+            ">
+                Clear session details make it easier for the right
+                students to discover and join you.
+            </p>
+
+            <div style="
+                display: grid;
+                gap: 13px;
+                color: #d8dbea;
+                font-size: 12px;
+            ">
+
+                <div>
+                    <i class="fa-solid fa-circle-check"
+                       style="color: #68d6a6; width: 22px;"></i>
+                    Use a specific topic name
+                </div>
+
+                <div>
+                    <i class="fa-solid fa-circle-check"
+                       style="color: #68d6a6; width: 22px;"></i>
+                    Choose an accessible venue
+                </div>
+
+                <div>
+                    <i class="fa-solid fa-circle-check"
+                       style="color: #68d6a6; width: 22px;"></i>
+                    Keep the group manageable
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
 {% endblock %}

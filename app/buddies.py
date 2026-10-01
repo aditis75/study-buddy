@@ -17,10 +17,11 @@ def find():
     subject = request.args.get("subject", "").strip()
 
     query = User.query.filter(
-        User.id != current_user.id,
-        User.is_verified.is_(True),
-        User.is_suspended.is_(False),
-    )
+    User.id != current_user.id,
+    User.role == "student",
+    User.is_verified.is_(True),
+    User.is_suspended.is_(False),
+)
 
     if department:
         query = query.filter(
@@ -66,6 +67,10 @@ def send_request(user_id):
 
     if not receiver:
         flash("Student not found.", "danger")
+        return redirect(url_for("buddies.find"))
+
+    if receiver.role != "student":
+        flash("Study requests can only be sent to student accounts.", "danger")
         return redirect(url_for("buddies.find"))
 
     if receiver.id == current_user.id:

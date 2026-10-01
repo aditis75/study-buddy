@@ -1,19 +1,183 @@
 {% extends "base.html" %}
-{% block title %}Study Sessions{% endblock %}
+
+{% block title %}Study Sessions | Study Buddy{% endblock %}
+
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-3">
-  <h2>Study Sessions</h2>
-  <a class="btn btn-primary" href="{{ url_for('study_sessions.create') }}">Create Session</a>
+
+<div class="page-header">
+
+    <div>
+        <h1 class="page-title">Study Sessions</h1>
+        <p class="page-subtitle">
+            Join collaborative learning sessions or create your own.
+        </p>
+    </div>
+
+    <a
+        class="btn"
+        href="{{ url_for('study_sessions.create') }}"
+    >
+        <i class="fa-solid fa-plus"></i>
+        Create Session
+    </a>
+
 </div>
-{% for s in sessions %}
-<div class="card mb-3">
-  <div class="card-body">
-    <h5>{{ s.subject }}</h5>
-    <p>{{ s.date }} at {{ s.time }} · {{ s.venue }}</p>
-    <a href="{{ url_for('study_sessions.detail', sid=s.id) }}" class="btn btn-outline-primary">View</a>
-  </div>
+
+
+<div class="hero-card" style="padding: 25px 28px;">
+
+    <div style="position: relative; z-index: 2;">
+
+        <span class="badge" style="
+            background: rgba(255,255,255,.12);
+            color: white;
+            margin-bottom: 10px;
+        ">
+            <i class="fa-solid fa-people-group"></i>
+            COLLABORATIVE LEARNING
+        </span>
+
+        <h2 style="font-size: 24px; margin-bottom: 6px;">
+            Learn together. Understand better.
+        </h2>
+
+        <p style="margin: 0; max-width: 650px;">
+            Explore active sessions created by students across your
+            learning community and join the ones that match your goals.
+        </p>
+
+    </div>
+
 </div>
+
+
+<div class="section-header">
+
+    <div>
+        <h2 class="section-title">Available Sessions</h2>
+        <span class="card-muted">
+            {{ sessions|length }} active session{% if sessions|length != 1 %}s{% endif %}
+        </span>
+    </div>
+
+</div>
+
+
+{% if sessions %}
+
+<div class="grid grid-3">
+
+    {% for s in sessions %}
+
+    <div class="card">
+
+        <div style="
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 18px;
+        ">
+
+            <div class="stat-icon blue">
+                <i class="fa-solid fa-book-open"></i>
+            </div>
+
+            <span class="badge badge-success">
+                <i class="fa-solid fa-circle" style="font-size: 6px;"></i>
+                Active
+            </span>
+
+        </div>
+
+
+        <h3 style="font-size: 18px; margin-bottom: 4px;">
+            {{ s.subject }}
+        </h3>
+
+        <p class="card-muted" style="margin-top: 0;">
+            Collaborative Study Session
+        </p>
+
+
+        <div style="
+            display: grid;
+            gap: 10px;
+            margin: 19px 0;
+            padding: 14px;
+            border-radius: 11px;
+            background: var(--surface-soft);
+            font-size: 13px;
+        ">
+
+            <div>
+                <i class="fa-regular fa-calendar"
+                   style="width: 24px; color: var(--primary);"></i>
+                {{ s.date }}
+            </div>
+
+            <div>
+                <i class="fa-regular fa-clock"
+                   style="width: 24px; color: var(--primary);"></i>
+                {{ s.time }}
+            </div>
+
+            <div>
+                <i class="fa-solid fa-location-dot"
+                   style="width: 24px; color: var(--primary);"></i>
+                {{ s.venue }}
+            </div>
+
+            <div>
+                <i class="fa-solid fa-users"
+                   style="width: 24px; color: var(--primary);"></i>
+                Maximum {{ s.max_participants }} participants
+            </div>
+
+        </div>
+
+
+        <a
+            href="{{ url_for('study_sessions.detail', sid=s.id) }}"
+            class="btn btn-secondary"
+            style="width: 100%;"
+        >
+            View Session
+            <i class="fa-solid fa-arrow-right"></i>
+        </a>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+
 {% else %}
-<p>No active sessions yet.</p>
-{% endfor %}
+
+<div class="empty-state">
+
+    <div class="empty-icon">
+        <i class="fa-solid fa-calendar-plus"></i>
+    </div>
+
+    <h3>No active study sessions</h3>
+
+    <p>
+        Be the first to organize a session and start learning together.
+    </p>
+
+    <a
+        href="{{ url_for('study_sessions.create') }}"
+        class="btn"
+        style="margin-top: 12px;"
+    >
+        <i class="fa-solid fa-plus"></i>
+        Create First Session
+    </a>
+
+</div>
+
+{% endif %}
+
 {% endblock %}

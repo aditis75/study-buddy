@@ -1,13 +1,265 @@
 {% extends "base.html" %}
-{% block title %}Notifications{% endblock %}
+
+{% block title %}Notifications | Study Buddy{% endblock %}
+
 {% block content %}
-<h2>Notifications</h2>
-{% for n in notifications %}
-<div class="alert alert-light border">
-  {{ n.message }}
-  <small class="text-muted d-block">{{ n.created_at }}</small>
+
+<!-- PAGE HEADER -->
+
+<div class="page-header">
+
+    <div>
+        <h1 class="page-title">Notifications</h1>
+
+        <p class="page-subtitle">
+            Stay updated with your study sessions, buddy requests,
+            SOS activity and community interactions.
+        </p>
+    </div>
+
+    <span class="badge badge-blue">
+        <i class="fa-solid fa-bell"></i>
+
+        {{ notifications|length }}
+
+        notification{% if notifications|length != 1 %}s{% endif %}
+    </span>
+
 </div>
+
+
+<!-- HERO -->
+
+<div class="hero-card" style="padding: 25px 30px;">
+
+    <div style="position: relative; z-index: 2;">
+
+        <span
+            class="badge"
+            style="
+                background: rgba(255,255,255,.12);
+                color: white;
+                margin-bottom: 10px;
+            "
+        >
+            <i class="fa-solid fa-bolt"></i>
+            ACTIVITY CENTER
+        </span>
+
+        <h2 style="
+            font-size: 23px;
+            margin-bottom: 6px;
+        ">
+            Keep up with your study network.
+        </h2>
+
+        <p style="
+            margin: 0;
+            max-width: 650px;
+        ">
+            Important updates from your sessions, study buddies
+            and collaboration activities appear here.
+        </p>
+
+    </div>
+
+</div>
+
+
+<!-- NOTIFICATION LIST -->
+
+<div class="section-header">
+
+    <div>
+        <h2 class="section-title">
+            Recent Activity
+        </h2>
+
+        <span class="card-muted">
+            Your latest Study Buddy updates
+        </span>
+    </div>
+
+</div>
+
+
+{% if notifications %}
+
+<div style="
+    display: grid;
+    gap: 12px;
+">
+
+    {% for n in notifications %}
+
+        {% if n.type == "buddy" %}
+
+            {% set icon = "fa-user-group" %}
+            {% set icon_color = "var(--primary)" %}
+            {% set icon_bg = "var(--primary-soft)" %}
+            {% set label = "Study Buddy" %}
+
+        {% elif n.type == "sos" %}
+
+            {% set icon = "fa-hand" %}
+            {% set icon_color = "var(--danger)" %}
+            {% set icon_bg = "#fff0f2" %}
+            {% set label = "SOS Help" %}
+
+        {% elif n.type == "session" %}
+
+            {% set icon = "fa-calendar-check" %}
+            {% set icon_color = "var(--blue)" %}
+            {% set icon_bg = "#edf5ff" %}
+            {% set label = "Study Session" %}
+
+        {% else %}
+
+            {% set icon = "fa-bell" %}
+            {% set icon_color = "var(--primary)" %}
+            {% set icon_bg = "var(--primary-soft)" %}
+            {% set label = "Update" %}
+
+        {% endif %}
+
+
+        <div class="card" style="padding: 17px 19px;">
+
+            <div style="
+                display: flex;
+                align-items: center;
+                gap: 15px;
+            ">
+
+                <!-- ICON -->
+
+                <div style="
+                    width: 46px;
+                    height: 46px;
+                    min-width: 46px;
+                    border-radius: 13px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background: {{ icon_bg }};
+                    color: {{ icon_color }};
+                    font-size: 16px;
+                ">
+                    <i class="fa-solid {{ icon }}"></i>
+                </div>
+
+
+                <!-- CONTENT -->
+
+                <div style="
+                    flex: 1;
+                    min-width: 0;
+                ">
+
+                    <div style="
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                        margin-bottom: 5px;
+                    ">
+
+                        <span style="
+                            font-size: 10px;
+                            font-weight: 800;
+                            letter-spacing: .05em;
+                            text-transform: uppercase;
+                            color: {{ icon_color }};
+                        ">
+                            {{ label }}
+                        </span>
+
+                    </div>
+
+
+                    <div style="
+                        font-size: 13px;
+                        font-weight: 600;
+                        line-height: 1.5;
+                        margin-bottom: 5px;
+                    ">
+                        {{ n.message }}
+                    </div>
+
+
+                    <span class="card-muted">
+                        <i class="fa-regular fa-clock"></i>
+                        {{ n.created_at.strftime('%d %b %Y, %I:%M %p') }}
+                    </span>
+
+                </div>
+
+
+                <!-- ACTION -->
+
+                {% if n.link %}
+
+                    <a
+                        href="{{ n.link }}"
+                        class="btn btn-secondary btn-sm"
+                    >
+                        View
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+
+                {% else %}
+
+                    <div style="
+                        width: 31px;
+                        height: 31px;
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        background: #edf9f3;
+                        color: var(--success);
+                    ">
+                        <i class="fa-solid fa-check"></i>
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    {% endfor %}
+
+</div>
+
+
 {% else %}
-<p>No notifications.</p>
-{% endfor %}
+
+<!-- EMPTY STATE -->
+
+<div class="empty-state">
+
+    <div class="empty-icon">
+        <i class="fa-regular fa-bell"></i>
+    </div>
+
+    <h3>You're all caught up</h3>
+
+    <p>
+        There are no notifications yet. Updates from study sessions,
+        buddy requests and SOS activity will appear here.
+    </p>
+
+    <a
+        href="{{ url_for('dashboard.home') }}"
+        class="btn btn-secondary"
+        style="margin-top: 10px;"
+    >
+        <i class="fa-solid fa-house"></i>
+        Back to Dashboard
+    </a>
+
+</div>
+
+{% endif %}
+
 {% endblock %}

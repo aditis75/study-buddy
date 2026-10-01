@@ -1,236 +1,602 @@
 {% extends "base.html" %}
 
+{% block title %}Admin Control Center | Study Buddy{% endblock %}
+
 {% block content %}
 
-<h2>Admin Dashboard 🛡️</h2>
+<!-- PAGE HEADER -->
 
-<p>
-    Manage Study Buddy student accounts.
-</p>
+<div class="page-header">
 
-<hr>
+    <div>
+        <h1 class="page-title">Admin Control Center</h1>
 
-<h3>Platform Overview</h3>
-
-<div style="
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-">
-
-    <div style="
-        border: 1px solid #ccc;
-        padding: 20px;
-        width: 160px;
-    ">
-        <h4>Total Users</h4>
-        <h2>{{ total_users }}</h2>
+        <p class="page-subtitle">
+            Monitor platform accounts, verify students and manage user access.
+        </p>
     </div>
 
+    <span class="badge badge-blue">
+        <i class="fa-solid fa-shield-halved"></i>
+        Administrator Access
+    </span>
+
+</div>
+
+
+<!-- ADMIN HERO -->
+
+<div
+    class="hero-card"
+    style="
+        padding: 28px 30px;
+        margin-bottom: 22px;
+    "
+>
 
     <div style="
-        border: 1px solid #ccc;
-        padding: 20px;
-        width: 160px;
+        position: relative;
+        z-index: 2;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 25px;
     ">
-        <h4>Verified</h4>
-        <h2>{{ verified_users }}</h2>
-    </div>
+
+        <div>
+
+            <span
+                class="badge"
+                style="
+                    background: rgba(255,255,255,.12);
+                    color: white;
+                    margin-bottom: 11px;
+                "
+            >
+                <i class="fa-solid fa-lock"></i>
+                PLATFORM MANAGEMENT
+            </span>
+
+            <h2 style="
+                font-size: 25px;
+                margin-bottom: 7px;
+            ">
+                Welcome, {{ current_user.name }}.
+            </h2>
+
+            <p style="
+                margin: 0;
+                max-width: 650px;
+            ">
+                Review student accounts and maintain a verified,
+                trusted Study Buddy community.
+            </p>
+
+        </div>
 
 
-    <div style="
-        border: 1px solid #ccc;
-        padding: 20px;
-        width: 160px;
-    ">
-        <h4>Unverified</h4>
-        <h2>{{ unverified_users }}</h2>
-    </div>
+        <div style="
+            width: 66px;
+            height: 66px;
+            min-width: 66px;
+            border-radius: 19px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,.10);
+            color: white;
+            font-size: 25px;
+        ">
+            <i class="fa-solid fa-user-shield"></i>
+        </div>
 
-
-    <div style="
-        border: 1px solid #ccc;
-        padding: 20px;
-        width: 160px;
-    ">
-        <h4>Suspended</h4>
-        <h2>{{ suspended_users }}</h2>
     </div>
 
 </div>
 
-<hr>
 
-<h3>User Management</h3>
+<!-- PLATFORM STATISTICS -->
 
-{% if users %}
+<div class="grid grid-4" style="margin-bottom: 25px;">
 
-<table
-    border="1"
-    cellpadding="10"
-    cellspacing="0"
-    style="width: 100%;"
->
+    <!-- TOTAL USERS -->
 
-    <thead>
+    <div class="card">
 
-        <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Department</th>
-            <th>Year</th>
-            <th>Role</th>
-            <th>Verified</th>
-            <th>Status</th>
-            <th>Actions</th>
-        </tr>
+        <div style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        ">
 
-    </thead>
+            <div>
+                <span class="card-muted">
+                    Total Accounts
+                </span>
 
-    <tbody>
+                <h2 style="
+                    font-size: 28px;
+                    margin: 5px 0 0;
+                ">
+                    {{ total_users }}
+                </h2>
+            </div>
 
-        {% for user in users %}
+            <div class="stat-icon">
+                <i class="fa-solid fa-users"></i>
+            </div>
 
-        <tr>
+        </div>
 
-            <td>
-                {{ user.name }}
-            </td>
+    </div>
 
-            <td>
-                {{ user.email }}
-            </td>
 
-            <td>
-                {{ user.department or "-" }}
-            </td>
+    <!-- VERIFIED -->
 
-            <td>
-                {{ user.year or "-" }}
-            </td>
+    <div class="card">
 
-            <td>
-                {{ user.role|capitalize }}
-            </td>
+        <div style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        ">
 
-            <td>
+            <div>
+                <span class="card-muted">
+                    Verified
+                </span>
 
-                {% if user.is_verified %}
+                <h2 style="
+                    font-size: 28px;
+                    margin: 5px 0 0;
+                ">
+                    {{ verified_users }}
+                </h2>
+            </div>
 
-                    Yes
+            <div class="stat-icon green">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
 
-                {% else %}
+        </div>
 
-                    No
+    </div>
 
-                {% endif %}
 
-            </td>
+    <!-- UNVERIFIED -->
 
-            <td>
+    <div class="card">
 
-                {% if user.is_suspended %}
+        <div style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        ">
 
+            <div>
+                <span class="card-muted">
+                    Awaiting Verification
+                </span>
+
+                <h2 style="
+                    font-size: 28px;
+                    margin: 5px 0 0;
+                ">
+                    {{ unverified_users }}
+                </h2>
+            </div>
+
+            <div
+                class="stat-icon"
+                style="
+                    background: #fff7e8;
+                    color: var(--warning);
+                "
+            >
+                <i class="fa-solid fa-user-clock"></i>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- SUSPENDED -->
+
+    <div class="card">
+
+        <div style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        ">
+
+            <div>
+                <span class="card-muted">
                     Suspended
+                </span>
 
-                {% else %}
+                <h2 style="
+                    font-size: 28px;
+                    margin: 5px 0 0;
+                ">
+                    {{ suspended_users }}
+                </h2>
+            </div>
 
-                    Active
+            <div
+                class="stat-icon"
+                style="
+                    background: #fff0f2;
+                    color: var(--danger);
+                "
+            >
+                <i class="fa-solid fa-user-slash"></i>
+            </div>
 
-                {% endif %}
+        </div>
 
-            </td>
+    </div>
 
-            <td>
-
-                {% if not user.is_verified %}
-
-                    <form
-                        method="POST"
-                        action="{{ url_for(
-                            'admin.verify_user',
-                            user_id=user.id
-                        ) }}"
-                        style="display: inline;"
-                    >
-
-                        <button type="submit">
-                            Verify
-                        </button>
-
-                    </form>
-
-                {% endif %}
+</div>
 
 
-                {% if user.id != current_user.id %}
+<!-- USER MANAGEMENT -->
 
-                    {% if user.is_suspended %}
+<div class="card">
 
-                        <form
-                            method="POST"
-                            action="{{ url_for(
-                                'admin.unsuspend_user',
-                                user_id=user.id
-                            ) }}"
-                            style="display: inline;"
-                        >
+    <div class="section-header" style="margin-top: 0;">
 
-                            <button type="submit">
-                                Reactivate
-                            </button>
+        <div>
 
-                        </form>
+            <h2 class="section-title">
+                User Management
+            </h2>
 
-                    {% else %}
+            <span class="card-muted">
+                Verify registrations and control account access.
+            </span>
 
-                        <form
-                            method="POST"
-                            action="{{ url_for(
-                                'admin.suspend_user',
-                                user_id=user.id
-                            ) }}"
-                            style="display: inline;"
-                        >
+        </div>
 
-                            <button type="submit">
-                                Suspend
-                            </button>
 
-                        </form>
+        <span class="badge">
+            <i class="fa-solid fa-database"></i>
+            {{ users|length }} Accounts
+        </span>
 
-                    {% endif %}
+    </div>
 
-                {% else %}
 
-                    Current Admin
+    {% if users %}
 
-                {% endif %}
+    <div style="overflow-x: auto;">
 
-            </td>
+        <table>
 
-        </tr>
+            <thead>
 
-        {% endfor %}
+                <tr>
+                    <th>Student</th>
+                    <th>Academic Info</th>
+                    <th>Role</th>
+                    <th>Verification</th>
+                    <th>Account Status</th>
+                    <th>Actions</th>
+                </tr>
 
-    </tbody>
+            </thead>
 
-</table>
 
-{% else %}
+            <tbody>
 
-<p>
-    No users found.
-</p>
+                {% for user in users %}
 
-{% endif %}
+                <tr>
 
-<hr>
+                    <!-- USER -->
 
-<p>
-    <a href="{{ url_for('dashboard.home') }}">
-        ← Back to Dashboard
-    </a>
-</p>
+                    <td>
+
+                        <div style="
+                            display: flex;
+                            align-items: center;
+                            gap: 10px;
+                            min-width: 190px;
+                        ">
+
+                            <div style="
+                                width: 37px;
+                                height: 37px;
+                                min-width: 37px;
+                                border-radius: 11px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                background:
+                                    {% if user.role == 'admin' %}
+                                        linear-gradient(135deg, #202846, #6657e8)
+                                    {% else %}
+                                        var(--primary-soft)
+                                    {% endif %};
+                                color:
+                                    {% if user.role == 'admin' %}
+                                        white
+                                    {% else %}
+                                        var(--primary)
+                                    {% endif %};
+                                font-size: 12px;
+                                font-weight: 800;
+                            ">
+                                {{ user.name[0]|upper }}
+                            </div>
+
+
+                            <div>
+
+                                <strong style="
+                                    display: block;
+                                    font-size: 12px;
+                                ">
+                                    {{ user.name }}
+                                </strong>
+
+                                <span class="card-muted">
+                                    {{ user.email }}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </td>
+
+
+                    <!-- ACADEMIC INFO -->
+
+                    <td>
+
+                        <strong style="
+                            display: block;
+                            font-size: 11px;
+                        ">
+                            {{ user.department or "Not specified" }}
+                        </strong>
+
+                        <span class="card-muted">
+
+                            {% if user.year %}
+                                Year {{ user.year }}
+                            {% else %}
+                                Year not specified
+                            {% endif %}
+
+                        </span>
+
+                    </td>
+
+
+                    <!-- ROLE -->
+
+                    <td>
+
+                        {% if user.role == "admin" %}
+
+                            <span class="badge badge-blue">
+                                <i class="fa-solid fa-shield-halved"></i>
+                                Admin
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge">
+                                <i class="fa-solid fa-graduation-cap"></i>
+                                Student
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- VERIFICATION -->
+
+                    <td>
+
+                        {% if user.is_verified %}
+
+                            <span
+                                class="badge"
+                                style="
+                                    background: #edf9f3;
+                                    color: var(--success);
+                                "
+                            >
+                                <i class="fa-solid fa-circle-check"></i>
+                                Verified
+                            </span>
+
+                        {% else %}
+
+                            <span
+                                class="badge"
+                                style="
+                                    background: #fff7e8;
+                                    color: var(--warning);
+                                "
+                            >
+                                <i class="fa-solid fa-clock"></i>
+                                Pending
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- STATUS -->
+
+                    <td>
+
+                        {% if user.is_suspended %}
+
+                            <span
+                                class="badge"
+                                style="
+                                    background: #fff0f2;
+                                    color: var(--danger);
+                                "
+                            >
+                                <i class="fa-solid fa-ban"></i>
+                                Suspended
+                            </span>
+
+                        {% else %}
+
+                            <span
+                                class="badge"
+                                style="
+                                    background: #edf9f3;
+                                    color: var(--success);
+                                "
+                            >
+                                <i class="fa-solid fa-circle"></i>
+                                Active
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- ACTIONS -->
+
+                    <td>
+
+                        <div style="
+                            display: flex;
+                            flex-wrap: wrap;
+                            gap: 7px;
+                        ">
+
+                            {% if not user.is_verified %}
+
+                                <form
+                                    method="POST"
+                                    action="{{ url_for(
+                                        'admin.verify_user',
+                                        user_id=user.id
+                                    ) }}"
+                                >
+
+                                    <button
+                                        type="submit"
+                                        class="btn btn-sm"
+                                    >
+                                        <i class="fa-solid fa-check"></i>
+                                        Verify
+                                    </button>
+
+                                </form>
+
+                            {% endif %}
+
+
+                            {% if user.id != current_user.id %}
+
+                                {% if user.is_suspended %}
+
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for(
+                                            'admin.unsuspend_user',
+                                            user_id=user.id
+                                        ) }}"
+                                    >
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-secondary btn-sm"
+                                        >
+                                            <i class="fa-solid fa-user-check"></i>
+                                            Reactivate
+                                        </button>
+
+                                    </form>
+
+                                {% else %}
+
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for(
+                                            'admin.suspend_user',
+                                            user_id=user.id
+                                        ) }}"
+                                    >
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-secondary btn-sm"
+                                            style="
+                                                color: var(--danger);
+                                            "
+                                        >
+                                            <i class="fa-solid fa-user-slash"></i>
+                                            Suspend
+                                        </button>
+
+                                    </form>
+
+                                {% endif %}
+
+                            {% else %}
+
+                                <span
+                                    class="badge"
+                                    style="
+                                        background: var(--primary-soft);
+                                        color: var(--primary);
+                                    "
+                                >
+                                    <i class="fa-solid fa-user-shield"></i>
+                                    Current Admin
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    {% else %}
+
+    <div class="empty-state">
+
+        <div class="empty-icon">
+            <i class="fa-solid fa-users"></i>
+        </div>
+
+        <h3>No user accounts found</h3>
+
+        <p>
+            Registered platform users will appear here.
+        </p>
+
+    </div>
+
+    {% endif %}
+
+</div>
 
 {% endblock %}

@@ -1,113 +1,584 @@
 {% extends "base.html" %}
 
+{% block title %}Study Buddy Requests | Study Buddy{% endblock %}
+
 {% block content %}
 
-<h2>Study Buddy Requests 👥</h2>
 
-<p>
-    <a href="{{ url_for('buddies.find') }}">
-        ← Find Study Buddies
+<!-- HEADER -->
+
+<div class="page-header">
+
+    <div>
+
+        <h1 class="page-title">
+            Study Buddy Requests
+        </h1>
+
+        <p class="page-subtitle">
+            Manage students who want to collaborate with you
+            and track the requests you've sent.
+        </p>
+
+    </div>
+
+
+    <a
+        href="{{ url_for('buddies.find') }}"
+        class="btn"
+    >
+        <i class="fa-solid fa-magnifying-glass"></i>
+        Find Study Buddies
     </a>
-</p>
 
-<hr>
+</div>
 
-<h3>Incoming Requests</h3>
 
-{% if incoming %}
+<!-- SUMMARY -->
 
-    {% for req in incoming %}
+<div class="grid grid-3" style="margin-bottom: 25px;">
 
-        <div style="
-            border: 1px solid #ccc;
-            padding: 15px;
-            margin-bottom: 15px;
-        ">
 
-            <h4>
-                {{ users[req.sender_id].name }}
-            </h4>
+    <!-- INCOMING -->
 
-            <p>
-                Department:
-                {{ users[req.sender_id].department or "Not specified" }}
-            </p>
+    <div class="stat-card">
 
-            <p>
-                Subjects:
-                {{ users[req.sender_id].subjects or "Not specified" }}
-            </p>
+        <div class="stat-icon">
+            <i class="fa-solid fa-user-plus"></i>
+        </div>
 
-            <p>
-                Status:
-                <strong>{{ req.status|capitalize }}</strong>
-            </p>
+        <div>
 
-            {% if req.status == "pending" %}
+            <div class="stat-value">
+                {{ incoming|length }}
+            </div>
 
-                <form
-                    method="POST"
-                    action="{{ url_for('buddies.accept_request', request_id=req.id) }}"
-                    style="display: inline;"
-                >
-                    <button type="submit">
-                        Accept
-                    </button>
-                </form>
-
-                <form
-                    method="POST"
-                    action="{{ url_for('buddies.reject_request', request_id=req.id) }}"
-                    style="display: inline;"
-                >
-                    <button type="submit">
-                        Reject
-                    </button>
-                </form>
-
-            {% endif %}
+            <div class="stat-label">
+                Incoming Requests
+            </div>
 
         </div>
 
-    {% endfor %}
+    </div>
 
-{% else %}
 
-    <p>No incoming study buddy requests.</p>
+    <!-- OUTGOING -->
 
-{% endif %}
+    <div class="stat-card">
 
-<hr>
+        <div class="stat-icon blue">
+            <i class="fa-solid fa-paper-plane"></i>
+        </div>
 
-<h3>Sent Requests</h3>
+        <div>
 
-{% if outgoing %}
+            <div class="stat-value">
+                {{ outgoing|length }}
+            </div>
 
-    {% for req in outgoing %}
-
-        <div style="
-            border: 1px solid #ccc;
-            padding: 15px;
-            margin-bottom: 15px;
-        ">
-
-            <h4>
-                {{ users[req.receiver_id].name }}
-            </h4>
-
-            <p>
-                Status:
-                <strong>{{ req.status|capitalize }}</strong>
-            </p>
+            <div class="stat-label">
+                Requests Sent
+            </div>
 
         </div>
 
-    {% endfor %}
+    </div>
 
-{% else %}
 
-    <p>You haven't sent any study buddy requests.</p>
+    <!-- COLLABORATION -->
 
-{% endif %}
+    <div class="stat-card">
+
+        <div class="stat-icon green">
+            <i class="fa-solid fa-handshake"></i>
+        </div>
+
+        <div>
+
+            <div class="stat-value">
+                Connect
+            </div>
+
+            <div class="stat-label">
+                Build Your Study Network
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- INCOMING REQUESTS -->
+
+<div class="card" style="margin-bottom: 22px;">
+
+    <div class="section-header">
+
+        <div>
+
+            <h2 class="section-title">
+
+                <i
+                    class="fa-solid fa-inbox"
+                    style="color: var(--primary);"
+                ></i>
+
+                Incoming Requests
+
+            </h2>
+
+            <span class="card-muted">
+                Students who want to study with you.
+            </span>
+
+        </div>
+
+
+        {% if incoming %}
+
+            <span class="badge">
+                {{ incoming|length }}
+            </span>
+
+        {% endif %}
+
+    </div>
+
+
+    {% if incoming %}
+
+        <div style="display: grid; gap: 12px;">
+
+        {% for study_request in incoming %}
+
+            {% set sender = users.get(study_request.sender_id) %}
+
+
+            <div style="
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                padding: 15px;
+                border: 1px solid var(--border);
+                border-radius: 13px;
+                background: var(--surface-soft);
+            ">
+
+
+                <!-- AVATAR -->
+
+                <div style="
+                    width: 45px;
+                    height: 45px;
+                    min-width: 45px;
+                    border-radius: 13px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background:
+                        linear-gradient(
+                            135deg,
+                            var(--primary),
+                            var(--blue)
+                        );
+                    color: white;
+                    font-weight: 800;
+                ">
+
+                    {% if sender %}
+                        {{ sender.name[0]|upper }}
+                    {% else %}
+                        S
+                    {% endif %}
+
+                </div>
+
+
+                <!-- USER -->
+
+                <div style="flex: 1;">
+
+                    <strong style="
+                        display: block;
+                        font-size: 14px;
+                    ">
+
+                        {% if sender %}
+
+                            {{ sender.name }}
+
+                        {% else %}
+
+                            Student {{ study_request.sender_id }}
+
+                        {% endif %}
+
+                    </strong>
+
+
+                    <span class="card-muted">
+
+                        {% if sender %}
+
+                            {{ sender.department or "Student" }}
+
+                            {% if sender.year %}
+                                • Year {{ sender.year }}
+                            {% endif %}
+
+                        {% else %}
+
+                            Study Buddy member
+
+                        {% endif %}
+
+                    </span>
+
+
+                    {% if sender and sender.subjects %}
+
+                        <div style="
+                            margin-top: 5px;
+                            font-size: 11px;
+                            color: var(--muted);
+                        ">
+
+                            <i class="fa-solid fa-book"></i>
+
+                            {{ sender.subjects }}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- ACTION -->
+
+                {% if study_request.status == "pending" %}
+
+                    <div style="
+                        display: flex;
+                        gap: 8px;
+                        align-items: center;
+                    ">
+
+                        <form
+                            method="POST"
+                            action="{{ url_for('buddies.accept_request', request_id=study_request.id) }}"
+                            style="margin: 0;"
+                        >
+
+                            <button
+                                type="submit"
+                                class="btn btn-success btn-sm"
+                            >
+
+                                <i class="fa-solid fa-check"></i>
+
+                                Accept
+
+                            </button>
+
+                        </form>
+
+
+                        <form
+                            method="POST"
+                            action="{{ url_for('buddies.reject_request', request_id=study_request.id) }}"
+                            style="margin: 0;"
+                        >
+
+                            <button
+                                type="submit"
+                                class="btn btn-danger btn-sm"
+                            >
+
+                                <i class="fa-solid fa-xmark"></i>
+
+                                Decline
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+
+                {% elif study_request.status == "accepted" %}
+
+                    <span class="badge badge-success">
+
+                        <i class="fa-solid fa-user-check"></i>
+
+                        Accepted
+
+                    </span>
+
+
+                {% elif study_request.status == "rejected" %}
+
+                    <span class="badge badge-danger">
+
+                        Declined
+
+                    </span>
+
+
+                {% else %}
+
+                    <span class="badge">
+
+                        {{ study_request.status|capitalize }}
+
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+        {% endfor %}
+
+        </div>
+
+
+    {% else %}
+
+        <div style="
+            padding: 30px;
+            text-align: center;
+            border-radius: 12px;
+            background: var(--surface-soft);
+        ">
+
+            <div
+                class="stat-icon"
+                style="margin: 0 auto 10px;"
+            >
+                <i class="fa-solid fa-inbox"></i>
+            </div>
+
+            <strong style="display: block;">
+                No incoming requests
+            </strong>
+
+            <span class="card-muted">
+                New study buddy requests will appear here.
+            </span>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+
+
+<!-- OUTGOING REQUESTS -->
+
+<div class="card">
+
+    <div class="section-header">
+
+        <div>
+
+            <h2 class="section-title">
+
+                <i
+                    class="fa-solid fa-paper-plane"
+                    style="color: var(--blue);"
+                ></i>
+
+                Requests You've Sent
+
+            </h2>
+
+            <span class="card-muted">
+                Track the status of your study buddy requests.
+            </span>
+
+        </div>
+
+    </div>
+
+
+    {% if outgoing %}
+
+        <div style="display: grid; gap: 12px;">
+
+        {% for study_request in outgoing %}
+
+            {% set receiver = users.get(study_request.receiver_id) %}
+
+
+            <div style="
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                padding: 14px 15px;
+                border: 1px solid var(--border);
+                border-radius: 13px;
+            ">
+
+
+                <!-- AVATAR -->
+
+                <div style="
+                    width: 42px;
+                    height: 42px;
+                    min-width: 42px;
+                    border-radius: 12px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background: var(--primary-soft);
+                    color: var(--primary);
+                    font-weight: 800;
+                ">
+
+                    {% if receiver %}
+                        {{ receiver.name[0]|upper }}
+                    {% else %}
+                        S
+                    {% endif %}
+
+                </div>
+
+
+                <!-- DETAILS -->
+
+                <div style="flex: 1;">
+
+                    <strong style="
+                        display: block;
+                        font-size: 13px;
+                    ">
+
+                        {% if receiver %}
+
+                            {{ receiver.name }}
+
+                        {% else %}
+
+                            Student {{ study_request.receiver_id }}
+
+                        {% endif %}
+
+                    </strong>
+
+
+                    <span class="card-muted">
+
+                        {% if receiver %}
+
+                            {{ receiver.department or "Student" }}
+
+                            {% if receiver.year %}
+                                • Year {{ receiver.year }}
+                            {% endif %}
+
+                        {% else %}
+
+                            Study Buddy member
+
+                        {% endif %}
+
+                    </span>
+
+                </div>
+
+
+                <!-- STATUS -->
+
+                {% if study_request.status == "pending" %}
+
+                    <span class="badge badge-warning">
+
+                        <i class="fa-regular fa-clock"></i>
+
+                        Pending
+
+                    </span>
+
+
+                {% elif study_request.status == "accepted" %}
+
+                    <span class="badge badge-success">
+
+                        <i class="fa-solid fa-handshake"></i>
+
+                        Accepted
+
+                    </span>
+
+
+                {% elif study_request.status == "rejected" %}
+
+                    <span class="badge badge-danger">
+
+                        <i class="fa-solid fa-circle-xmark"></i>
+
+                        Declined
+
+                    </span>
+
+
+                {% else %}
+
+                    <span class="badge">
+                        {{ study_request.status|capitalize }}
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+        {% endfor %}
+
+        </div>
+
+
+    {% else %}
+
+        <div style="
+            padding: 30px;
+            text-align: center;
+            border-radius: 12px;
+            background: var(--surface-soft);
+        ">
+
+            <i
+                class="fa-regular fa-paper-plane"
+                style="
+                    font-size: 25px;
+                    color: var(--muted);
+                    margin-bottom: 10px;
+                "
+            ></i>
+
+            <strong style="display: block;">
+                You haven't sent any requests yet
+            </strong>
+
+            <p class="card-muted">
+                Find students with similar academic interests
+                and start building your study network.
+            </p>
+
+            <a
+                href="{{ url_for('buddies.find') }}"
+                class="btn btn-secondary"
+            >
+                Find Study Buddies
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
 
 {% endblock %}

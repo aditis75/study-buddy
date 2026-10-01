@@ -1,172 +1,567 @@
 {% extends "base.html" %}
 
+{% block title %}Find Study Buddies | Study Buddy{% endblock %}
+
 {% block content %}
 
-<h2>Find Study Buddies 👥</h2>
+<!-- PAGE HEADER -->
 
-<p>
-    Find students with similar subjects and study interests.
-</p>
+<div class="page-header">
 
-<p>
-    <a href="{{ url_for('buddies.requests') }}">
-        View My Study Requests
-    </a>
-</p>
+    <div>
+        <h1 class="page-title">Find Study Buddies</h1>
 
-<hr>
+        <p class="page-subtitle">
+            Discover verified students who match your subjects,
+            academic year and study interests.
+        </p>
+    </div>
 
-<h3>Search Filters</h3>
-
-<form method="GET" action="{{ url_for('buddies.find') }}">
-
-    <label for="department">Department</label>
-
-    <input
-        type="text"
-        id="department"
-        name="department"
-        value="{{ department }}"
-        placeholder="Example: CSE"
+    <a
+        href="{{ url_for('buddies.requests') }}"
+        class="btn btn-secondary"
     >
-
-    <br><br>
-
-    <label for="year">Year</label>
-
-    <select id="year" name="year">
-
-        <option value="">
-            Any Year
-        </option>
-
-        <option value="1" {% if year == 1 %}selected{% endif %}>
-            1st Year
-        </option>
-
-        <option value="2" {% if year == 2 %}selected{% endif %}>
-            2nd Year
-        </option>
-
-        <option value="3" {% if year == 3 %}selected{% endif %}>
-            3rd Year
-        </option>
-
-        <option value="4" {% if year == 4 %}selected{% endif %}>
-            4th Year
-        </option>
-
-    </select>
-
-    <br><br>
-
-    <label for="subject">Subject</label>
-
-    <input
-        type="text"
-        id="subject"
-        name="subject"
-        value="{{ subject }}"
-        placeholder="Example: DBMS"
-    >
-
-    <br><br>
-
-    <button type="submit">
-        Search Buddies
-    </button>
-
-    <a href="{{ url_for('buddies.find') }}">
-        Clear Filters
+        <i class="fa-solid fa-user-clock"></i>
+        My Study Requests
     </a>
 
-</form>
+</div>
 
-<hr>
 
-<h3>Available Study Buddies</h3>
+<!-- HERO -->
+
+<div class="hero-card" style="padding: 26px 30px;">
+
+    <div style="position: relative; z-index: 2;">
+
+        <span
+            class="badge"
+            style="
+                background: rgba(255,255,255,.12);
+                color: white;
+                margin-bottom: 11px;
+            "
+        >
+            <i class="fa-solid fa-people-arrows"></i>
+            SMART STUDENT DISCOVERY
+        </span>
+
+        <h2 style="
+            font-size: 25px;
+            margin-bottom: 7px;
+        ">
+            Your next study partner could be here.
+        </h2>
+
+        <p style="
+            margin: 0;
+            max-width: 670px;
+        ">
+            Filter your campus community by department,
+            academic year or subject to find students
+            you can learn and collaborate with.
+        </p>
+
+    </div>
+
+</div>
+
+
+<!-- SEARCH FILTER -->
+
+<div class="card" style="margin-top: 22px;">
+
+    <div style="
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+    ">
+
+        <div class="stat-icon">
+            <i class="fa-solid fa-sliders"></i>
+        </div>
+
+        <div>
+            <h2
+                class="card-title"
+                style="margin: 0;"
+            >
+                Find Your Match
+            </h2>
+
+            <span class="card-muted">
+                Use one or more filters to narrow your search.
+            </span>
+        </div>
+
+    </div>
+
+
+    <form
+        method="GET"
+        action="{{ url_for('buddies.find') }}"
+    >
+
+        <div style="
+            display: grid;
+            grid-template-columns: 1fr .7fr 1fr auto;
+            gap: 13px;
+            align-items: end;
+        ">
+
+            <!-- DEPARTMENT -->
+
+            <div class="form-group" style="margin: 0;">
+
+                <label for="department">
+                    <i class="fa-solid fa-building-columns"></i>
+                    Department
+                </label>
+
+                <input
+                    type="text"
+                    id="department"
+                    name="department"
+                    value="{{ department }}"
+                    placeholder="e.g. CSE"
+                >
+
+            </div>
+
+
+            <!-- YEAR -->
+
+            <div class="form-group" style="margin: 0;">
+
+                <label for="year">
+                    <i class="fa-solid fa-layer-group"></i>
+                    Year
+                </label>
+
+                <select
+                    id="year"
+                    name="year"
+                >
+
+                    <option value="">
+                        Any Year
+                    </option>
+
+                    <option
+                        value="1"
+                        {% if year == 1 %}selected{% endif %}
+                    >
+                        1st Year
+                    </option>
+
+                    <option
+                        value="2"
+                        {% if year == 2 %}selected{% endif %}
+                    >
+                        2nd Year
+                    </option>
+
+                    <option
+                        value="3"
+                        {% if year == 3 %}selected{% endif %}
+                    >
+                        3rd Year
+                    </option>
+
+                    <option
+                        value="4"
+                        {% if year == 4 %}selected{% endif %}
+                    >
+                        4th Year
+                    </option>
+
+                    <option
+                        value="5"
+                        {% if year == 5 %}selected{% endif %}
+                    >
+                        5th Year
+                    </option>
+
+                    <option
+                        value="6"
+                        {% if year == 6 %}selected{% endif %}
+                    >
+                        6th Year
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- SUBJECT -->
+
+            <div class="form-group" style="margin: 0;">
+
+                <label for="subject">
+                    <i class="fa-solid fa-book-open"></i>
+                    Subject
+                </label>
+
+                <input
+                    type="text"
+                    id="subject"
+                    name="subject"
+                    value="{{ subject }}"
+                    placeholder="e.g. DBMS"
+                >
+
+            </div>
+
+
+            <!-- SEARCH -->
+
+            <button
+                type="submit"
+                class="btn"
+                style="height: 44px;"
+            >
+                <i class="fa-solid fa-magnifying-glass"></i>
+                Search
+            </button>
+
+        </div>
+
+
+        {% if department or year or subject %}
+
+        <div style="margin-top: 13px;">
+
+            <a
+                href="{{ url_for('buddies.find') }}"
+                style="
+                    font-size: 12px;
+                    font-weight: 700;
+                "
+            >
+                <i class="fa-solid fa-xmark"></i>
+                Clear all filters
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </form>
+
+</div>
+
+
+<!-- RESULTS -->
+
+<div class="section-header">
+
+    <div>
+
+        <h2 class="section-title">
+            Available Study Buddies
+        </h2>
+
+        <span class="card-muted">
+
+            {{ buddies|length }}
+
+            student{% if buddies|length != 1 %}s{% endif %}
+
+            found
+
+        </span>
+
+    </div>
+
+</div>
+
 
 {% if buddies %}
 
+<div class="grid grid-3">
+
     {% for buddy in buddies %}
 
+    <div class="card">
+
+        <!-- PROFILE HEADER -->
+
         <div style="
-            border: 1px solid #ccc;
-            padding: 15px;
-            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            margin-bottom: 18px;
         ">
 
-            <h4>
-                {{ buddy.name }}
-            </h4>
+            <div style="
+                width: 52px;
+                height: 52px;
+                min-width: 52px;
+                border-radius: 15px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background:
+                    linear-gradient(
+                        135deg,
+                        var(--primary),
+                        var(--blue)
+                    );
+                color: white;
+                font-family: Manrope, sans-serif;
+                font-size: 19px;
+                font-weight: 800;
+            ">
 
-            <p>
-                <strong>Department:</strong>
-                {{ buddy.department or "Not specified" }}
-            </p>
+                {{ buddy.name[0]|upper }}
 
-            <p>
-                <strong>Year:</strong>
-                {{ buddy.year or "Not specified" }}
-            </p>
-
-            <p>
-                <strong>Subjects:</strong>
-                {{ buddy.subjects or "Not specified" }}
-            </p>
-
-            <p>
-                <strong>Study Preference:</strong>
-                {{ buddy.study_preferences or "Not specified" }}
-            </p>
-
-            <p>
-                <strong>Availability:</strong>
-                {{ buddy.availability or "Not specified" }}
-            </p>
-
-            <p>
-                <strong>Interests:</strong>
-                {{ buddy.interests or "Not specified" }}
-            </p>
+            </div>
 
 
-            <!-- STUDY REQUEST SECTION -->
+            <div style="min-width: 0;">
+
+                <h3 style="
+                    margin: 0 0 3px;
+                    font-size: 16px;
+                ">
+                    {{ buddy.name }}
+                </h3>
+
+                <span class="card-muted">
+                    {{ buddy.department or "Department not specified" }}
+
+                    {% if buddy.year %}
+                        • Year {{ buddy.year }}
+                    {% endif %}
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- VERIFIED -->
+
+        <div style="margin-bottom: 16px;">
+
+            <span class="badge badge-success">
+
+                <i class="fa-solid fa-circle-check"></i>
+
+                Verified Student
+
+            </span>
+
+        </div>
+
+
+        <!-- DETAILS -->
+
+        <div style="
+            display: grid;
+            gap: 12px;
+            margin-bottom: 18px;
+        ">
+
+            <div>
+
+                <span class="card-muted">
+                    <i
+                        class="fa-solid fa-book"
+                        style="
+                            width: 20px;
+                            color: var(--primary);
+                        "
+                    ></i>
+
+                    Subjects
+                </span>
+
+                <div style="
+                    margin-top: 4px;
+                    font-size: 13px;
+                    font-weight: 600;
+                ">
+                    {{ buddy.subjects or "Not specified" }}
+                </div>
+
+            </div>
+
+
+            <div>
+
+                <span class="card-muted">
+                    <i
+                        class="fa-solid fa-brain"
+                        style="
+                            width: 20px;
+                            color: var(--primary);
+                        "
+                    ></i>
+
+                    Study Style
+                </span>
+
+                <div style="
+                    margin-top: 4px;
+                    font-size: 13px;
+                ">
+                    {{ buddy.study_preferences or "Not specified" }}
+                </div>
+
+            </div>
+
+
+            <div>
+
+                <span class="card-muted">
+                    <i
+                        class="fa-regular fa-clock"
+                        style="
+                            width: 20px;
+                            color: var(--primary);
+                        "
+                    ></i>
+
+                    Availability
+                </span>
+
+                <div style="
+                    margin-top: 4px;
+                    font-size: 13px;
+                ">
+                    {{ buddy.availability or "Not specified" }}
+                </div>
+
+            </div>
+
+
+            <div>
+
+                <span class="card-muted">
+                    <i
+                        class="fa-regular fa-star"
+                        style="
+                            width: 20px;
+                            color: var(--primary);
+                        "
+                    ></i>
+
+                    Interests
+                </span>
+
+                <div style="
+                    margin-top: 4px;
+                    font-size: 13px;
+                ">
+                    {{ buddy.interests or "Not specified" }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- REQUEST ACTION -->
+
+        <div style="
+            border-top: 1px solid var(--border);
+            padding-top: 15px;
+        ">
 
             {% if request_status.get(buddy.id) %}
 
-                <p>
-                    <strong>Request Status:</strong>
 
-                    {% if request_status.get(buddy.id) == "pending" %}
+                {% if request_status.get(buddy.id) == "pending" %}
 
-                        Pending
+                    <div style="
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                    ">
 
-                    {% elif request_status.get(buddy.id) == "accepted" %}
+                        <span class="badge badge-warning">
 
-                        Accepted
+                            <i class="fa-regular fa-clock"></i>
 
-                    {% elif request_status.get(buddy.id) == "rejected" %}
+                            Request Pending
 
-                        Rejected
+                        </span>
 
-                    {% else %}
+                        <i
+                            class="fa-solid fa-paper-plane"
+                            style="color: var(--muted);"
+                        ></i>
+
+                    </div>
+
+
+                {% elif request_status.get(buddy.id) == "accepted" %}
+
+                    <div style="
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                    ">
+
+                        <span class="badge badge-success">
+
+                            <i class="fa-solid fa-user-check"></i>
+
+                            Study Buddies
+
+                        </span>
+
+                        <i
+                            class="fa-solid fa-handshake"
+                            style="color: var(--success);"
+                        ></i>
+
+                    </div>
+
+
+                {% elif request_status.get(buddy.id) == "rejected" %}
+
+                    <span class="badge badge-danger">
+
+                        <i class="fa-solid fa-circle-xmark"></i>
+
+                        Request Declined
+
+                    </span>
+
+
+                {% else %}
+
+                    <span class="badge">
 
                         {{ request_status.get(buddy.id)|capitalize }}
 
-                    {% endif %}
+                    </span>
 
-                </p>
+                {% endif %}
+
 
             {% else %}
 
                 <form
                     method="POST"
                     action="{{ url_for('buddies.send_request', user_id=buddy.id) }}"
+                    style="margin: 0;"
                 >
 
-                    <button type="submit">
+                    <button
+                        type="submit"
+                        class="btn"
+                        style="width: 100%;"
+                    >
+
+                        <i class="fa-solid fa-user-plus"></i>
+
                         Send Study Request
+
                     </button>
 
                 </form>
@@ -175,22 +570,39 @@
 
         </div>
 
+    </div>
+
     {% endfor %}
+
+</div>
+
 
 {% else %}
 
+<div class="empty-state">
+
+    <div class="empty-icon">
+        <i class="fa-solid fa-user-group"></i>
+    </div>
+
+    <h3>No matching students found</h3>
+
     <p>
-        No study buddies found matching your filters.
+        Try changing or clearing your search filters
+        to discover more study buddies.
     </p>
 
-{% endif %}
-
-<hr>
-
-<p>
-    <a href="{{ url_for('dashboard.home') }}">
-        ← Back to Dashboard
+    <a
+        href="{{ url_for('buddies.find') }}"
+        class="btn btn-secondary"
+        style="margin-top: 10px;"
+    >
+        <i class="fa-solid fa-rotate-left"></i>
+        Reset Filters
     </a>
-</p>
+
+</div>
+
+{% endif %}
 
 {% endblock %}

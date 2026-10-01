@@ -1,63 +1,264 @@
 {% extends "base.html" %}
 
+{% block title %}Start Discussion | Study Buddy{% endblock %}
+
 {% block content %}
 
-<h2>Create Discussion 💬</h2>
+<!-- HEADER -->
 
-<p>
-    Ask a question or start a discussion with other students.
-</p>
+<div class="page-header">
 
-<hr>
+    <div>
 
-<form method="POST">
+        <h1 class="page-title">
+            Start a Discussion
+        </h1>
 
-    <label for="title">
-        <strong>Discussion Title</strong>
-    </label>
+        <p class="page-subtitle">
+            Ask a question, explain a problem or start a conversation with your peers.
+        </p>
 
-    <br>
+    </div>
 
-    <input
-        type="text"
-        id="title"
-        name="title"
-        placeholder="Example: Help with Dynamic Programming"
-        required
-        style="width: 100%; max-width: 600px;"
+
+    <a
+        href="{{ url_for('forum.list_posts') }}"
+        class="btn btn-secondary"
     >
-
-    <br><br>
-
-    <label for="content">
-        <strong>Your Question / Discussion</strong>
-    </label>
-
-    <br>
-
-    <textarea
-        id="content"
-        name="content"
-        rows="8"
-        placeholder="Describe your question or topic..."
-        required
-        style="width: 100%; max-width: 600px;"
-    ></textarea>
-
-    <br><br>
-
-    <button type="submit">
-        Post Discussion
-    </button>
-
-</form>
-
-<hr>
-
-<p>
-    <a href="{{ url_for('forum.list_posts') }}">
-        ← Back to Forum
+        <i class="fa-solid fa-arrow-left"></i>
+        Back to Forum
     </a>
-</p>
+
+</div>
+
+
+<div style="
+    display: grid;
+    grid-template-columns: minmax(0, 1.7fr) minmax(260px, .7fr);
+    gap: 22px;
+">
+
+
+    <!-- FORM -->
+
+    <div class="card">
+
+        <div style="
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            margin-bottom: 25px;
+        ">
+
+            <div class="stat-icon">
+                <i class="fa-solid fa-pen-to-square"></i>
+            </div>
+
+            <div>
+
+                <h2
+                    class="card-title"
+                    style="margin: 0;"
+                >
+                    Create Your Post
+                </h2>
+
+                <span class="card-muted">
+                    Give students enough context to understand your discussion.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <form method="POST">
+
+            <!-- TITLE -->
+
+            <div class="form-group">
+
+                <label for="title">
+                    <i class="fa-solid fa-heading"></i>
+                    Discussion Title
+                </label>
+
+                <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    placeholder="e.g. How does Dynamic Programming differ from Greedy?"
+                    required
+                >
+
+                <span style="
+                    display: block;
+                    margin-top: 6px;
+                    color: var(--muted);
+                    font-size: 11px;
+                ">
+                    Keep your title clear and specific.
+                </span>
+
+            </div>
+
+
+            <!-- CONTENT -->
+
+            <div class="form-group">
+
+                <label for="content">
+                    <i class="fa-regular fa-message"></i>
+                    Your Question or Discussion
+                </label>
+
+                <textarea
+                    id="content"
+                    name="content"
+                    placeholder="Explain the concept, problem or idea you want to discuss..."
+                    required
+                    style="min-height: 220px;"
+                ></textarea>
+
+            </div>
+
+
+            <!-- ACTIONS -->
+
+            <div style="
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+                gap: 10px;
+                margin-top: 7px;
+            ">
+
+                <a
+                    href="{{ url_for('forum.list_posts') }}"
+                    class="btn btn-secondary"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="btn"
+                >
+                    <i class="fa-solid fa-paper-plane"></i>
+                    Post Discussion
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- RIGHT INFORMATION -->
+
+    <div>
+
+        <div
+            class="card"
+            style="
+                background: linear-gradient(145deg, #171d38, #30286c);
+                color: white;
+                border: none;
+            "
+        >
+
+            <div style="
+                width: 45px;
+                height: 45px;
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(255,255,255,.10);
+                margin-bottom: 17px;
+            ">
+                <i class="fa-solid fa-lightbulb"></i>
+            </div>
+
+
+            <h3 style="
+                color: white;
+                font-size: 17px;
+                margin-bottom: 7px;
+            ">
+                Better questions get better answers
+            </h3>
+
+
+            <p style="
+                color: #c5cadb;
+                font-size: 12px;
+                line-height: 1.7;
+            ">
+                Explain what you're trying to understand and
+                where you're getting stuck.
+            </p>
+
+
+            <div style="
+                display: grid;
+                gap: 14px;
+                margin-top: 20px;
+                color: #d8dbea;
+                font-size: 12px;
+            ">
+
+                <div>
+                    <i
+                        class="fa-solid fa-circle-check"
+                        style="
+                            color: #68d6a6;
+                            width: 22px;
+                        "
+                    ></i>
+                    Use a descriptive title
+                </div>
+
+                <div>
+                    <i
+                        class="fa-solid fa-circle-check"
+                        style="
+                            color: #68d6a6;
+                            width: 22px;
+                        "
+                    ></i>
+                    Explain what you've tried
+                </div>
+
+                <div>
+                    <i
+                        class="fa-solid fa-circle-check"
+                        style="
+                            color: #68d6a6;
+                            width: 22px;
+                        "
+                    ></i>
+                    Keep the discussion academic
+                </div>
+
+                <div>
+                    <i
+                        class="fa-solid fa-circle-check"
+                        style="
+                            color: #68d6a6;
+                            width: 22px;
+                        "
+                    ></i>
+                    Help others when you can
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 
 {% endblock %}

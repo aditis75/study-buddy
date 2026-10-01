@@ -1,11 +1,353 @@
 {% extends "base.html" %}
-{% block title %}Login{% endblock %}
+
+{% block title %}Login | Study Buddy{% endblock %}
+
 {% block content %}
-<h2>Login</h2>
-<form method="post">
-  <input class="form-control mb-3" name="email" type="email" placeholder="College email" required>
-  <input class="form-control mb-3" name="password" type="password" placeholder="Password" required>
-  <button class="btn btn-primary">Login</button>
-</form>
-<p class="mt-3">New user? <a href="{{ url_for('auth.register') }}">Register</a></p>
+
+<div class="auth-page">
+
+    <!-- LEFT SIDE -->
+
+    <section class="auth-showcase">
+
+        <div style="position: relative; z-index: 2;">
+
+            <div style="
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 50px;
+            ">
+
+                <div class="brand-icon">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+
+                <div>
+                    <div style="
+                        font-family: Manrope, sans-serif;
+                        font-size: 21px;
+                        font-weight: 800;
+                    ">
+                        Study Buddy
+                    </div>
+
+                    <div style="
+                        color: #929cb5;
+                        font-size: 11px;
+                        letter-spacing: 1px;
+                    ">
+                        STUDENT COLLABORATION PLATFORM
+                    </div>
+                </div>
+
+            </div>
+
+
+            <span style="
+                display: inline-flex;
+                align-items: center;
+                gap: 7px;
+                padding: 6px 11px;
+                margin-bottom: 18px;
+                border-radius: 20px;
+                background: rgba(255,255,255,0.08);
+                color: #d7d9eb;
+                font-size: 12px;
+            ">
+                <i class="fa-solid fa-sparkles"></i>
+                Learn better, together
+            </span>
+
+
+            <h1>
+                Your campus.<br>
+                Your community.<br>
+                <span style="color: #8e84ff;">
+                    Your study space.
+                </span>
+            </h1>
+
+            <p>
+                Find the right study partners, collaborate on
+                difficult concepts and share knowledge with your
+                student community — all in one place.
+            </p>
+
+
+            <div class="auth-feature">
+
+                <div class="auth-feature-icon">
+                    <i class="fa-solid fa-user-group"></i>
+                </div>
+
+                <div>
+                    <strong>Find compatible study buddies</strong>
+                </div>
+
+            </div>
+
+
+            <div class="auth-feature">
+
+                <div class="auth-feature-icon">
+                    <i class="fa-solid fa-calendar-check"></i>
+                </div>
+
+                <div>
+                    <strong>Plan collaborative study sessions</strong>
+                </div>
+
+            </div>
+
+
+            <div class="auth-feature">
+
+                <div class="auth-feature-icon">
+                    <i class="fa-solid fa-book-open"></i>
+                </div>
+
+                <div>
+                    <strong>Share resources and solve doubts</strong>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- RIGHT SIDE -->
+
+    <section class="auth-form-side">
+
+        <div class="auth-box">
+
+            <div class="auth-logo">
+                <i class="fa-solid fa-graduation-cap"></i>
+            </div>
+
+            <div style="margin-bottom: 28px;">
+
+                <h2 style="
+                    font-size: 27px;
+                    margin-bottom: 6px;
+                ">
+                    Welcome back
+                </h2>
+
+                <p class="card-muted" style="margin: 0;">
+                    Sign in to continue to your Study Buddy workspace.
+                </p>
+
+            </div>
+
+
+            <form method="post">
+
+                <div class="form-group">
+
+                    <label>
+                        College Email
+                    </label>
+
+                    <div style="position: relative;">
+
+                        <i
+                            class="fa-regular fa-envelope"
+                            style="
+                                position: absolute;
+                                left: 14px;
+                                top: 14px;
+                                color: #9299aa;
+                            "
+                        ></i>
+
+                        <input
+                            name="email"
+                            type="email"
+                            placeholder="yourname@mitwpu.edu.in"
+                            required
+                            style="padding-left: 42px;"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <div style="
+                        display: flex;
+                        justify-content: space-between;
+                    ">
+
+                        <label>
+                            Password
+                        </label>
+
+                        <span style="
+                            font-size: 11px;
+                            color: var(--muted);
+                        ">
+                            Secure login
+                        </span>
+
+                    </div>
+
+
+                    <div style="position: relative;">
+
+                        <i
+                            class="fa-solid fa-lock"
+                            style="
+                                position: absolute;
+                                left: 14px;
+                                top: 14px;
+                                color: #9299aa;
+                            "
+                        ></i>
+
+                        <input
+                            id="login-password"
+                            name="password"
+                            type="password"
+                            placeholder="Enter your password"
+                            required
+                            style="
+                                padding-left: 42px;
+                                padding-right: 45px;
+                            "
+                        >
+
+
+                        <button
+                            type="button"
+                            onclick="togglePassword()"
+                            style="
+                                position: absolute;
+                                right: 8px;
+                                top: 6px;
+                                width: 32px;
+                                height: 32px;
+                                min-height: 32px;
+                                padding: 0;
+                                background: transparent;
+                                color: #858da0;
+                                box-shadow: none;
+                            "
+                            title="Show password"
+                        >
+                            <i
+                                id="password-eye"
+                                class="fa-regular fa-eye"
+                            ></i>
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn"
+                    style="
+                        width: 100%;
+                        min-height: 46px;
+                        margin-top: 5px;
+                    "
+                >
+                    Sign In
+
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+
+            </form>
+
+
+            <div style="
+                position: relative;
+                text-align: center;
+                margin: 27px 0;
+            ">
+
+                <div style="
+                    height: 1px;
+                    background: var(--border);
+                "></div>
+
+                <span style="
+                    position: relative;
+                    top: -12px;
+                    padding: 0 12px;
+                    background: white;
+                    color: var(--muted);
+                    font-size: 12px;
+                ">
+                    New to Study Buddy?
+                </span>
+
+            </div>
+
+
+            <a
+                href="{{ url_for('auth.register') }}"
+                class="btn btn-secondary"
+                style="width: 100%;"
+            >
+                Create Student Account
+            </a>
+
+
+            <div style="
+                text-align: center;
+                margin-top: 30px;
+                color: var(--muted);
+                font-size: 11px;
+            ">
+                <i class="fa-solid fa-shield-halved"></i>
+                Access restricted to verified MIT-WPU students
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<script>
+
+function togglePassword() {
+
+    const password =
+        document.getElementById("login-password");
+
+    const eye =
+        document.getElementById("password-eye");
+
+
+    if (password.type === "password") {
+
+        password.type = "text";
+
+        eye.classList.remove("fa-eye");
+        eye.classList.add("fa-eye-slash");
+
+    } else {
+
+        password.type = "password";
+
+        eye.classList.remove("fa-eye-slash");
+        eye.classList.add("fa-eye");
+
+    }
+
+}
+
+</script>
+
 {% endblock %}

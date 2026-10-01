@@ -1148,7 +1148,7 @@ def test_admin_can_access_panel(client, app):
     response = client.get("/admin")
 
     assert response.status_code == 200
-    assert b"Admin Dashboard" in response.data
+    assert b"Admin Control Center" in response.data
 
 
 def test_admin_suspend_and_unsuspend_user(client, app):

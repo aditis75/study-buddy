@@ -1,100 +1,354 @@
 {% extends "base.html" %}
 
+{% block title %}Resource Hub | Study Buddy{% endblock %}
+
 {% block content %}
 
-<h2>Study Resources 📚</h2>
+<!-- PAGE HEADER -->
 
-<p>
-    Share and discover notes, presentations and study material.
-</p>
+<div class="page-header">
 
-<p>
-    <a href="{{ url_for('resources.upload') }}">
-        + Upload Resource
+    <div>
+        <h1 class="page-title">Resource Hub</h1>
+
+        <p class="page-subtitle">
+            Discover and share notes, presentations and useful academic material.
+        </p>
+    </div>
+
+    <a
+        href="{{ url_for('resources.upload') }}"
+        class="btn"
+    >
+        <i class="fa-solid fa-cloud-arrow-up"></i>
+        Upload Resource
     </a>
-</p>
 
-<hr>
+</div>
 
-<h3>Find Resources</h3>
 
-<form
-    method="GET"
-    action="{{ url_for('resources.list_notes') }}"
+<!-- HERO -->
+
+<div class="hero-card" style="padding: 27px 30px;">
+
+    <div style="position: relative; z-index: 2;">
+
+        <span
+            class="badge"
+            style="
+                background: rgba(255,255,255,.12);
+                color: white;
+                margin-bottom: 11px;
+            "
+        >
+            <i class="fa-solid fa-book-open-reader"></i>
+            SHARED KNOWLEDGE LIBRARY
+        </span>
+
+        <h2 style="
+            font-size: 25px;
+            margin-bottom: 7px;
+        ">
+            Learn from what your community shares.
+        </h2>
+
+        <p style="
+            margin: 0;
+            max-width: 680px;
+        ">
+            Access student-contributed notes, presentations and
+            study material — or upload something useful for others.
+        </p>
+
+    </div>
+
+</div>
+
+
+<!-- SEARCH -->
+
+<div
+    class="card"
+    style="margin-top: 22px;"
 >
 
-    <label for="subject">
-        Subject
-    </label>
-
-    <input
-        type="text"
-        id="subject"
-        name="subject"
-        value="{{ subject }}"
-        placeholder="Example: DBMS"
+    <form
+        method="GET"
+        action="{{ url_for('resources.list_notes') }}"
     >
 
-    <button type="submit">
-        Search
-    </button>
+        <div style="
+            display: flex;
+            align-items: flex-end;
+            gap: 12px;
+        ">
 
-    <a href="{{ url_for('resources.list_notes') }}">
-        Clear
-    </a>
+            <div
+                class="form-group"
+                style="
+                    flex: 1;
+                    margin: 0;
+                "
+            >
 
-</form>
+                <label for="subject">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    Find Resources by Subject
+                </label>
 
-<hr>
+                <input
+                    type="text"
+                    id="subject"
+                    name="subject"
+                    value="{{ subject }}"
+                    placeholder="Search DBMS, AI, Cloud Computing..."
+                >
 
-<h3>Available Resources</h3>
+            </div>
+
+
+            <button
+                type="submit"
+                class="btn"
+                style="height: 44px;"
+            >
+                <i class="fa-solid fa-magnifying-glass"></i>
+                Search
+            </button>
+
+
+            {% if subject %}
+
+                <a
+                    href="{{ url_for('resources.list_notes') }}"
+                    class="btn btn-secondary"
+                    style="height: 44px;"
+                >
+                    <i class="fa-solid fa-xmark"></i>
+                    Clear
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </form>
+
+</div>
+
+
+<!-- LIBRARY HEADER -->
+
+<div class="section-header">
+
+    <div>
+
+        <h2 class="section-title">
+            Available Resources
+        </h2>
+
+        <span class="card-muted">
+
+            {{ resources|length }}
+
+            resource{% if resources|length != 1 %}s{% endif %}
+
+            {% if subject %}
+                found for "{{ subject }}"
+            {% else %}
+                shared by the community
+            {% endif %}
+
+        </span>
+
+    </div>
+
+</div>
+
+
+<!-- RESOURCE CARDS -->
 
 {% if resources %}
 
+<div class="grid grid-3">
+
     {% for resource in resources %}
 
-        <div style="
-            border: 1px solid #ccc;
-            padding: 15px;
-            margin-bottom: 15px;
-        ">
+        {% set uploader = users.get(resource.user_id) %}
 
-            <h3>
+        <div class="card">
+
+            <!-- TOP -->
+
+            <div style="
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                gap: 12px;
+                margin-bottom: 17px;
+            ">
+
+                <div
+                    class="stat-icon"
+                    style="
+                        background: var(--primary-soft);
+                        color: var(--primary);
+                    "
+                >
+                    <i class="fa-solid fa-file-lines"></i>
+                </div>
+
+
+                <span class="badge badge-blue">
+                    {{ resource.subject }}
+                </span>
+
+            </div>
+
+
+            <!-- TITLE -->
+
+            <h3 style="
+                font-size: 17px;
+                line-height: 1.4;
+                margin-bottom: 7px;
+            ">
                 {{ resource.title }}
             </h3>
 
-            <p>
-                <strong>Subject:</strong>
-                {{ resource.subject }}
-            </p>
 
-            <p>
-                <strong>Description:</strong>
-                {{ resource.description or "No description provided." }}
-            </p>
+            <!-- DESCRIPTION -->
 
-            <p>
-                <strong>Uploaded by:</strong>
+            <p style="
+                color: var(--muted);
+                font-size: 12px;
+                line-height: 1.7;
+                min-height: 42px;
+                margin-bottom: 17px;
+            ">
 
-                {% if users.get(resource.user_id) %}
-                    {{ users[resource.user_id].name }}
+                {% if resource.description %}
+
+                    {{ resource.description[:130] }}
+
+                    {% if resource.description|length > 130 %}
+                        ...
+                    {% endif %}
+
                 {% else %}
-                    Unknown Student
+
+                    No description provided for this resource.
+
                 {% endif %}
+
             </p>
 
-            <p>
-                <small>
-                    Uploaded: {{ resource.created_at }}
-                </small>
-            </p>
+
+            <!-- UPLOADER -->
+
+            <div style="
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 12px;
+                margin-bottom: 15px;
+                border-radius: 11px;
+                background: var(--surface-soft);
+            ">
+
+                <div style="
+                    width: 34px;
+                    height: 34px;
+                    min-width: 34px;
+                    border-radius: 10px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background: linear-gradient(
+                        135deg,
+                        var(--primary),
+                        var(--blue)
+                    );
+                    color: white;
+                    font-size: 11px;
+                    font-weight: 800;
+                ">
+
+                    {% if uploader %}
+                        {{ uploader.name[0]|upper }}
+                    {% else %}
+                        S
+                    {% endif %}
+
+                </div>
+
+
+                <div style="min-width: 0;">
+
+                    <span
+                        class="card-muted"
+                        style="
+                            display: block;
+                            font-size: 10px;
+                        "
+                    >
+                        Shared by
+                    </span>
+
+                    <strong style="
+                        display: block;
+                        font-size: 12px;
+                    ">
+
+                        {% if uploader %}
+                            {{ uploader.name }}
+                        {% else %}
+                            Unknown Student
+                        {% endif %}
+
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- DATE -->
+
+            <div style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 10px;
+                margin-bottom: 14px;
+                color: var(--muted);
+                font-size: 10px;
+            ">
+
+                <span>
+                    <i class="fa-regular fa-calendar"></i>
+                    {{ resource.created_at.strftime('%d %b %Y') }}
+                </span>
+
+                <span>
+                    <i class="fa-solid fa-shield-halved"></i>
+                    Student Resource
+                </span>
+
+            </div>
+
+
+            <!-- DOWNLOAD -->
 
             <a
                 href="{{ url_for(
                     'resources.download',
                     resource_id=resource.id
                 ) }}"
+                class="btn btn-secondary"
+                style="width: 100%;"
             >
+                <i class="fa-solid fa-download"></i>
                 Download Resource
             </a>
 
@@ -102,20 +356,57 @@
 
     {% endfor %}
 
+</div>
+
+
 {% else %}
 
-    <p>
-        No resources found.
-    </p>
+<div class="empty-state">
+
+    <div class="empty-icon">
+        <i class="fa-solid fa-folder-open"></i>
+    </div>
+
+
+    {% if subject %}
+
+        <h3>No resources found for "{{ subject }}"</h3>
+
+        <p>
+            Try another subject or clear the search
+            to browse the complete resource library.
+        </p>
+
+        <a
+            href="{{ url_for('resources.list_notes') }}"
+            class="btn btn-secondary"
+            style="margin-top: 10px;"
+        >
+            <i class="fa-solid fa-rotate-left"></i>
+            View All Resources
+        </a>
+
+    {% else %}
+
+        <h3>The Resource Hub is waiting</h3>
+
+        <p>
+            Be the first student to contribute useful study material.
+        </p>
+
+        <a
+            href="{{ url_for('resources.upload') }}"
+            class="btn"
+            style="margin-top: 10px;"
+        >
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            Upload First Resource
+        </a>
+
+    {% endif %}
+
+</div>
 
 {% endif %}
-
-<hr>
-
-<p>
-    <a href="{{ url_for('dashboard.home') }}">
-        ← Back to Dashboard
-    </a>
-</p>
 
 {% endblock %}

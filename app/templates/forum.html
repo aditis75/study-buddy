@@ -1,83 +1,293 @@
 {% extends "base.html" %}
 
+{% block title %}Discussion Forum | Study Buddy{% endblock %}
+
 {% block content %}
 
-<h2>Discussion Forum 💬</h2>
+<!-- PAGE HEADER -->
 
-<p>
-    Ask questions, discuss subjects and help other students.
-</p>
+<div class="page-header">
 
-<p>
-    <a href="{{ url_for('forum.create_post') }}">
-        + Create New Discussion
+    <div>
+        <h1 class="page-title">Discussion Forum</h1>
+
+        <p class="page-subtitle">
+            Ask questions, exchange ideas and learn from your student community.
+        </p>
+    </div>
+
+    <a
+        href="{{ url_for('forum.create_post') }}"
+        class="btn"
+    >
+        <i class="fa-solid fa-plus"></i>
+        Start Discussion
     </a>
-</p>
 
-<hr>
+</div>
 
-<h3>Recent Discussions</h3>
+
+<!-- HERO -->
+
+<div class="hero-card" style="padding: 27px 30px;">
+
+    <div style="position: relative; z-index: 2;">
+
+        <span
+            class="badge"
+            style="
+                background: rgba(255,255,255,.12);
+                color: white;
+                margin-bottom: 11px;
+            "
+        >
+            <i class="fa-solid fa-comments"></i>
+            CAMPUS KNOWLEDGE COMMUNITY
+        </span>
+
+        <h2 style="
+            font-size: 25px;
+            margin-bottom: 7px;
+        ">
+            Questions become conversations.
+        </h2>
+
+        <p style="
+            margin: 0;
+            max-width: 670px;
+        ">
+            Stuck on a concept? Have an idea worth discussing?
+            Start a conversation and learn together with your peers.
+        </p>
+
+    </div>
+
+</div>
+
+
+<!-- FEED HEADER -->
+
+<div class="section-header">
+
+    <div>
+        <h2 class="section-title">
+            Recent Discussions
+        </h2>
+
+        <span class="card-muted">
+            {{ posts|length }}
+            discussion{% if posts|length != 1 %}s{% endif %}
+            in the community
+        </span>
+    </div>
+
+</div>
+
+
+<!-- DISCUSSIONS -->
 
 {% if posts %}
 
+<div style="
+    display: grid;
+    gap: 15px;
+">
+
     {% for post in posts %}
 
-        <div style="
-            border: 1px solid #ccc;
-            padding: 15px;
-            margin-bottom: 15px;
-        ">
+        {% set author = users.get(post.user_id) %}
 
-            <h3>
-                {{ post.title }}
-            </h3>
+        <div class="card">
 
-            <p>
-                <strong>Posted by:</strong>
+            <div style="
+                display: flex;
+                gap: 16px;
+                align-items: flex-start;
+            ">
 
-                {% if users.get(post.user_id) %}
-                    {{ users[post.user_id].name }}
-                {% else %}
-                    Unknown Student
-                {% endif %}
-            </p>
+                <!-- AUTHOR AVATAR -->
 
-            <p>
-                {{ post.content[:200] }}
+                <div style="
+                    width: 48px;
+                    height: 48px;
+                    min-width: 48px;
+                    border-radius: 14px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background: linear-gradient(
+                        135deg,
+                        var(--primary),
+                        var(--blue)
+                    );
+                    color: white;
+                    font-family: Manrope, sans-serif;
+                    font-size: 17px;
+                    font-weight: 800;
+                ">
 
-                {% if post.content|length > 200 %}
-                    ...
-                {% endif %}
-            </p>
+                    {% if author %}
+                        {{ author.name[0]|upper }}
+                    {% else %}
+                        S
+                    {% endif %}
 
-            <p>
-                <small>
-                    Posted: {{ post.created_at }}
-                </small>
-            </p>
+                </div>
 
-            <a href="{{ url_for('forum.view_post', post_id=post.id) }}">
-                View Discussion
-            </a>
+
+                <!-- POST -->
+
+                <div style="flex: 1; min-width: 0;">
+
+                    <!-- AUTHOR INFO -->
+
+                    <div style="
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        gap: 12px;
+                        margin-bottom: 8px;
+                    ">
+
+                        <div>
+
+                            <strong style="
+                                display: block;
+                                font-size: 13px;
+                            ">
+
+                                {% if author %}
+                                    {{ author.name }}
+                                {% else %}
+                                    Unknown Student
+                                {% endif %}
+
+                            </strong>
+
+
+                            <span class="card-muted">
+
+                                {% if author %}
+
+                                    {{ author.department or "Student" }}
+
+                                    {% if author.year %}
+                                        • Year {{ author.year }}
+                                    {% endif %}
+
+                                {% else %}
+
+                                    Study Buddy Community
+
+                                {% endif %}
+
+                            </span>
+
+                        </div>
+
+
+                        <span class="badge">
+                            <i class="fa-regular fa-clock"></i>
+                            {{ post.created_at.strftime('%d %b %Y') }}
+                        </span>
+
+                    </div>
+
+
+                    <!-- TITLE -->
+
+                    <h3 style="
+                        font-size: 18px;
+                        margin: 11px 0 7px;
+                    ">
+                        {{ post.title }}
+                    </h3>
+
+
+                    <!-- PREVIEW -->
+
+                    <p style="
+                        margin: 0 0 16px;
+                        color: var(--muted);
+                        font-size: 13px;
+                        line-height: 1.7;
+                    ">
+
+                        {{ post.content[:240] }}
+
+                        {% if post.content|length > 240 %}
+                            ...
+                        {% endif %}
+
+                    </p>
+
+
+                    <!-- FOOTER -->
+
+                    <div style="
+                        border-top: 1px solid var(--border);
+                        padding-top: 13px;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                    ">
+
+                        <span style="
+                            color: var(--muted);
+                            font-size: 11px;
+                        ">
+                            <i class="fa-solid fa-users"></i>
+                            Community Discussion
+                        </span>
+
+
+                        <a
+                            href="{{ url_for('forum.view_post', post_id=post.id) }}"
+                            class="btn btn-secondary btn-sm"
+                        >
+                            Open Discussion
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
 
         </div>
 
     {% endfor %}
 
+</div>
+
+
 {% else %}
 
+<div class="empty-state">
+
+    <div class="empty-icon">
+        <i class="fa-regular fa-comments"></i>
+    </div>
+
+    <h3>No discussions yet</h3>
+
     <p>
-        No discussions yet. Start the first discussion!
+        Your community is waiting for its first conversation.
+        Ask a question or share something worth discussing.
     </p>
 
-{% endif %}
-
-<hr>
-
-<p>
-    <a href="{{ url_for('dashboard.home') }}">
-        ← Back to Dashboard
+    <a
+        href="{{ url_for('forum.create_post') }}"
+        class="btn"
+        style="margin-top: 12px;"
+    >
+        <i class="fa-solid fa-plus"></i>
+        Start First Discussion
     </a>
-</p>
+
+</div>
+
+{% endif %}
 
 {% endblock %}

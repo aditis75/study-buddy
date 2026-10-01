@@ -1,13 +1,341 @@
 {% extends "base.html" %}
-{% block title %}Register{% endblock %}
+
+{% block title %}Create Account | Study Buddy{% endblock %}
+
 {% block content %}
-<h2>Create Account</h2>
-<form method="post">
-  <input class="form-control mb-3" name="name" placeholder="Name" required>
-  <input class="form-control mb-3" name="email" type="email" placeholder="MIT-WPU email" required>
-  <input class="form-control mb-3" name="department" placeholder="Department" required>
-  <input class="form-control mb-3" name="year" type="number" min="1" max="6" placeholder="Year" required>
-  <input class="form-control mb-3" name="password" type="password" placeholder="Password" required>
-  <button class="btn btn-primary">Register</button>
-</form>
+
+<div class="auth-page">
+
+    <!-- LEFT -->
+
+    <section class="auth-showcase">
+
+        <div style="position: relative; z-index: 2;">
+
+            <div style="
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 45px;
+            ">
+
+                <div class="brand-icon">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+
+                <div>
+
+                    <div style="
+                        font-family: Manrope, sans-serif;
+                        font-size: 21px;
+                        font-weight: 800;
+                    ">
+                        Study Buddy
+                    </div>
+
+                    <div style="
+                        color: #929cb5;
+                        font-size: 11px;
+                        letter-spacing: 1px;
+                    ">
+                        STUDENT COLLABORATION PLATFORM
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <h1 style="font-size: 42px;">
+                Don't study alone.<br>
+                <span style="color: #8e84ff;">
+                    Find your people.
+                </span>
+            </h1>
+
+            <p>
+                Join your campus learning community and connect
+                with students who share your subjects, goals
+                and study interests.
+            </p>
+
+
+            <div style="
+                margin-top: 38px;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 14px;
+                max-width: 480px;
+            ">
+
+                <div style="
+                    padding: 16px;
+                    border: 1px solid rgba(255,255,255,0.10);
+                    border-radius: 13px;
+                    background: rgba(255,255,255,0.05);
+                ">
+
+                    <i
+                        class="fa-solid fa-user-group"
+                        style="color: #9287ff;"
+                    ></i>
+
+                    <div style="
+                        margin-top: 9px;
+                        font-size: 13px;
+                        font-weight: 700;
+                    ">
+                        Study Buddies
+                    </div>
+
+                </div>
+
+
+                <div style="
+                    padding: 16px;
+                    border: 1px solid rgba(255,255,255,0.10);
+                    border-radius: 13px;
+                    background: rgba(255,255,255,0.05);
+                ">
+
+                    <i
+                        class="fa-solid fa-calendar-check"
+                        style="color: #5aa7ff;"
+                    ></i>
+
+                    <div style="
+                        margin-top: 9px;
+                        font-size: 13px;
+                        font-weight: 700;
+                    ">
+                        Study Sessions
+                    </div>
+
+                </div>
+
+
+                <div style="
+                    padding: 16px;
+                    border: 1px solid rgba(255,255,255,0.10);
+                    border-radius: 13px;
+                    background: rgba(255,255,255,0.05);
+                ">
+
+                    <i
+                        class="fa-solid fa-comments"
+                        style="color: #46d3d8;"
+                    ></i>
+
+                    <div style="
+                        margin-top: 9px;
+                        font-size: 13px;
+                        font-weight: 700;
+                    ">
+                        Community Forum
+                    </div>
+
+                </div>
+
+
+                <div style="
+                    padding: 16px;
+                    border: 1px solid rgba(255,255,255,0.10);
+                    border-radius: 13px;
+                    background: rgba(255,255,255,0.05);
+                ">
+
+                    <i
+                        class="fa-solid fa-book-open"
+                        style="color: #62d5a2;"
+                    ></i>
+
+                    <div style="
+                        margin-top: 9px;
+                        font-size: 13px;
+                        font-weight: 700;
+                    ">
+                        Resource Sharing
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- RIGHT -->
+
+    <section class="auth-form-side">
+
+        <div class="auth-box">
+
+            <div class="auth-logo">
+                <i class="fa-solid fa-user-plus"></i>
+            </div>
+
+
+            <h2 style="margin-bottom: 5px;">
+                Create your account
+            </h2>
+
+            <p
+                class="card-muted"
+                style="margin: 0 0 24px;"
+            >
+                Join the Study Buddy student community.
+            </p>
+
+
+            <form method="post">
+
+                <div class="form-group">
+
+                    <label>Full Name</label>
+
+                    <input
+                        name="name"
+                        placeholder="Enter your full name"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>MIT-WPU Email</label>
+
+                    <input
+                        name="email"
+                        type="email"
+                        placeholder="yourname@mitwpu.edu.in"
+                        required
+                    >
+
+                </div>
+
+
+                <div
+                    style="
+                        display: grid;
+                        grid-template-columns: 1.4fr 0.6fr;
+                        gap: 12px;
+                    "
+                >
+
+                    <div class="form-group">
+
+                        <label>Department</label>
+
+                        <input
+                            name="department"
+                            placeholder="e.g. CSE"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>Year</label>
+
+                        <input
+                            name="year"
+                            type="number"
+                            min="1"
+                            max="6"
+                            placeholder="3"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Password</label>
+
+                    <input
+                        name="password"
+                        type="password"
+                        placeholder="Create a strong password"
+                        required
+                    >
+
+                    <span style="
+                        display: block;
+                        margin-top: 6px;
+                        color: var(--muted);
+                        font-size: 10px;
+                    ">
+                        Use 8+ characters with uppercase, lowercase,
+                        number and special character.
+                    </span>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn"
+                    style="
+                        width: 100%;
+                        min-height: 46px;
+                    "
+                >
+                    Create Account
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+
+            </form>
+
+
+            <p style="
+                text-align: center;
+                margin-top: 22px;
+                font-size: 13px;
+                color: var(--muted);
+            ">
+
+                Already have an account?
+
+                <a
+                    href="{{ url_for('auth.login') }}"
+                    style="font-weight: 700;"
+                >
+                    Sign in
+                </a>
+
+            </p>
+
+
+            <div style="
+                padding: 12px;
+                margin-top: 18px;
+                border-radius: 10px;
+                background: var(--primary-soft);
+                color: #5b50bd;
+                font-size: 11px;
+                text-align: center;
+            ">
+
+                <i class="fa-solid fa-circle-info"></i>
+
+                New accounts require administrator verification
+                before login.
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
 {% endblock %}

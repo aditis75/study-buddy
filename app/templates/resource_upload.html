@@ -1,101 +1,397 @@
 {% extends "base.html" %}
 
+{% block title %}Upload Resource | Study Buddy{% endblock %}
+
 {% block content %}
 
-<h2>Upload Study Resource 📤</h2>
+<!-- HEADER -->
 
-<p>
-    Share notes, presentations or other useful study material.
-</p>
+<div class="page-header">
 
-<hr>
+    <div>
 
-<form
-    method="POST"
-    enctype="multipart/form-data"
->
+        <h1 class="page-title">
+            Upload a Resource
+        </h1>
 
-    <label for="title">
-        <strong>Resource Title</strong>
-    </label>
+        <p class="page-subtitle">
+            Contribute useful academic material to your student community.
+        </p>
 
-    <br>
+    </div>
 
-    <input
-        type="text"
-        id="title"
-        name="title"
-        placeholder="Example: DBMS Normalization Notes"
-        required
+
+    <a
+        href="{{ url_for('resources.list_notes') }}"
+        class="btn btn-secondary"
     >
-
-    <br><br>
-
-    <label for="subject">
-        <strong>Subject</strong>
-    </label>
-
-    <br>
-
-    <input
-        type="text"
-        id="subject"
-        name="subject"
-        placeholder="Example: DBMS"
-        required
-    >
-
-    <br><br>
-
-    <label for="description">
-        <strong>Description</strong>
-    </label>
-
-    <br>
-
-    <textarea
-        id="description"
-        name="description"
-        rows="5"
-        placeholder="Briefly describe this resource..."
-        style="width: 100%; max-width: 600px;"
-    ></textarea>
-
-    <br><br>
-
-    <label for="file">
-        <strong>Select File</strong>
-    </label>
-
-    <br>
-
-    <input
-        type="file"
-        id="file"
-        name="file"
-        accept=".pdf,.doc,.docx,.ppt,.pptx,.txt"
-        required
-    >
-
-    <p>
-        <small>
-            Allowed: PDF, DOC, DOCX, PPT, PPTX, TXT.
-            Maximum size: 25 MB.
-        </small>
-    </p>
-
-    <button type="submit">
-        Upload Resource
-    </button>
-
-</form>
-
-<hr>
-
-<p>
-    <a href="{{ url_for('resources.list_notes') }}">
-        ← Back to Resources
+        <i class="fa-solid fa-arrow-left"></i>
+        Back to Resource Hub
     </a>
-</p>
+
+</div>
+
+
+<div style="
+    display: grid;
+    grid-template-columns: minmax(0, 1.7fr) minmax(270px, .7fr);
+    gap: 22px;
+">
+
+
+    <!-- UPLOAD FORM -->
+
+    <div class="card">
+
+        <div style="
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            margin-bottom: 25px;
+        ">
+
+            <div class="stat-icon">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+            </div>
+
+            <div>
+
+                <h2
+                    class="card-title"
+                    style="margin: 0;"
+                >
+                    Resource Information
+                </h2>
+
+                <span class="card-muted">
+                    Add details so students can easily understand and find your resource.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <form
+            method="POST"
+            enctype="multipart/form-data"
+        >
+
+            <!-- TITLE -->
+
+            <div class="form-group">
+
+                <label for="title">
+                    <i class="fa-solid fa-heading"></i>
+                    Resource Title
+                </label>
+
+                <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    placeholder="e.g. DBMS Normalization Complete Notes"
+                    required
+                >
+
+            </div>
+
+
+            <!-- SUBJECT -->
+
+            <div class="form-group">
+
+                <label for="subject">
+                    <i class="fa-solid fa-book"></i>
+                    Subject
+                </label>
+
+                <input
+                    type="text"
+                    id="subject"
+                    name="subject"
+                    placeholder="e.g. DBMS"
+                    required
+                >
+
+                <span style="
+                    display: block;
+                    margin-top: 6px;
+                    color: var(--muted);
+                    font-size: 11px;
+                ">
+                    Use a clear subject name to make the resource easier to discover.
+                </span>
+
+            </div>
+
+
+            <!-- DESCRIPTION -->
+
+            <div class="form-group">
+
+                <label for="description">
+                    <i class="fa-regular fa-message"></i>
+                    Description
+                </label>
+
+                <textarea
+                    id="description"
+                    name="description"
+                    placeholder="Briefly explain what this resource covers..."
+                    style="min-height: 130px;"
+                ></textarea>
+
+            </div>
+
+
+            <!-- FILE -->
+
+            <div class="form-group">
+
+                <label for="file">
+                    <i class="fa-solid fa-paperclip"></i>
+                    Select File
+                </label>
+
+
+                <div style="
+                    padding: 24px;
+                    border: 2px dashed var(--border);
+                    border-radius: 14px;
+                    background: var(--surface-soft);
+                    text-align: center;
+                ">
+
+                    <div style="
+                        width: 52px;
+                        height: 52px;
+                        margin: 0 auto 12px;
+                        border-radius: 15px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        background: var(--primary-soft);
+                        color: var(--primary);
+                        font-size: 20px;
+                    ">
+                        <i class="fa-solid fa-file-arrow-up"></i>
+                    </div>
+
+
+                    <strong style="
+                        display: block;
+                        margin-bottom: 5px;
+                        font-size: 13px;
+                    ">
+                        Choose a study resource
+                    </strong>
+
+
+                    <span
+                        class="card-muted"
+                        style="
+                            display: block;
+                            margin-bottom: 14px;
+                        "
+                    >
+                        PDF, Word, PowerPoint or text document
+                    </span>
+
+
+                    <input
+                        type="file"
+                        id="file"
+                        name="file"
+                        accept=".pdf,.doc,.docx,.ppt,.pptx,.txt"
+                        required
+                        style="
+                            max-width: 420px;
+                            margin: auto;
+                            background: white;
+                        "
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- ACTIONS -->
+
+            <div style="
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+                gap: 10px;
+                margin-top: 8px;
+            ">
+
+                <a
+                    href="{{ url_for('resources.list_notes') }}"
+                    class="btn btn-secondary"
+                >
+                    Cancel
+                </a>
+
+
+                <button
+                    type="submit"
+                    class="btn"
+                >
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                    Upload Resource
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- RIGHT PANEL -->
+
+    <div>
+
+        <!-- FILE RULES -->
+
+        <div
+            class="card"
+            style="
+                background: linear-gradient(145deg, #171d38, #30286c);
+                color: white;
+                border: none;
+                margin-bottom: 20px;
+            "
+        >
+
+            <div style="
+                width: 45px;
+                height: 45px;
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(255,255,255,.10);
+                margin-bottom: 17px;
+            ">
+                <i class="fa-solid fa-file-shield"></i>
+            </div>
+
+
+            <h3 style="
+                color: white;
+                font-size: 17px;
+                margin-bottom: 7px;
+            ">
+                Upload Guidelines
+            </h3>
+
+
+            <p style="
+                color: #c5cadb;
+                font-size: 12px;
+                line-height: 1.7;
+            ">
+                Share useful academic material that can help
+                other students learn.
+            </p>
+
+
+            <div style="
+                display: grid;
+                gap: 14px;
+                margin-top: 20px;
+                color: #d8dbea;
+                font-size: 12px;
+            ">
+
+                <div>
+                    <i
+                        class="fa-solid fa-circle-check"
+                        style="
+                            color: #68d6a6;
+                            width: 22px;
+                        "
+                    ></i>
+                    PDF, DOC, DOCX
+                </div>
+
+
+                <div>
+                    <i
+                        class="fa-solid fa-circle-check"
+                        style="
+                            color: #68d6a6;
+                            width: 22px;
+                        "
+                    ></i>
+                    PPT, PPTX and TXT
+                </div>
+
+
+                <div>
+                    <i
+                        class="fa-solid fa-circle-check"
+                        style="
+                            color: #68d6a6;
+                            width: 22px;
+                        "
+                    ></i>
+                    Maximum file size: 25 MB
+                </div>
+
+
+                <div>
+                    <i
+                        class="fa-solid fa-circle-check"
+                        style="
+                            color: #68d6a6;
+                            width: 22px;
+                        "
+                    ></i>
+                    Use clear titles and subjects
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- COMMUNITY NOTE -->
+
+        <div class="card">
+
+            <div
+                class="stat-icon green"
+                style="margin-bottom: 13px;"
+            >
+                <i class="fa-solid fa-seedling"></i>
+            </div>
+
+            <h3 style="
+                font-size: 16px;
+                margin-bottom: 5px;
+            ">
+                Grow the community
+            </h3>
+
+            <p
+                class="card-muted"
+                style="
+                    line-height: 1.7;
+                    margin-bottom: 0;
+                "
+            >
+                Every useful resource you contribute can help another
+                student understand a difficult concept or prepare for an exam.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
 
 {% endblock %}

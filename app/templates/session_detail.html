@@ -1,127 +1,908 @@
 {% extends "base.html" %}
 
-{% block title %}Session Details{% endblock %}
+{% block title %}{{ session.subject }} | Study Buddy{% endblock %}
 
 {% block content %}
 
-<h2>{{ session.subject }}</h2>
 
-<p><strong>Date:</strong> {{ session.date }}</p>
-<p><strong>Time:</strong> {{ session.time }}</p>
-<p><strong>Venue:</strong> {{ session.venue }}</p>
-<p><strong>Status:</strong> {{ session.status }}</p>
+<!-- =====================================================
+     PAGE HEADER
+     ===================================================== -->
 
-{% if session.status == "active" %}
+<div class="page-header">
 
-<form method="post"
-      action="{{ url_for('study_sessions.join', sid=session.id) }}"
-      class="d-inline">
-    <button class="btn btn-success">Join</button>
-</form>
+    <div>
 
-<form method="post"
-      action="{{ url_for('study_sessions.leave', sid=session.id) }}"
-      class="d-inline">
-    <button class="btn btn-outline-secondary">Leave</button>
-</form>
+        <a
+            href="{{ url_for('study_sessions.list_sessions') }}"
+            style="
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                margin-bottom: 10px;
+                color: var(--muted);
+                font-size: 12px;
+                font-weight: 600;
+            "
+        >
+            <i class="fa-solid fa-arrow-left"></i>
+            All Study Sessions
+        </a>
 
-{% endif %}
 
-{% if current_user.id == session.creator_id %}
+        <h1 class="page-title">
+            {{ session.subject }}
+        </h1>
 
-<a class="btn btn-warning"
-   href="{{ url_for('study_sessions.edit', sid=session.id) }}">
-    Edit
-</a>
 
-<form method="post"
-      action="{{ url_for('study_sessions.cancel', sid=session.id) }}"
-      class="d-inline">
+        <p class="page-subtitle">
+            Collaborative study session
+        </p>
 
-    <button class="btn btn-danger">
-        Cancel
-    </button>
+    </div>
 
-</form>
 
-{% endif %}
+    {% if session.status == "active" %}
 
-<hr>
+        <span class="badge badge-success">
+            <i
+                class="fa-solid fa-circle"
+                style="font-size: 6px;"
+            ></i>
 
-<h4>Participants</h4>
+            Active Session
+        </span>
 
-<ul>
-{% for p in participants %}
-    <li>User ID: {{ p.user_id }}</li>
-{% else %}
-    <li>No participants.</li>
-{% endfor %}
-</ul>
+    {% else %}
 
-<hr>
+        <span class="badge badge-danger">
+            Session {{ session.status|title }}
+        </span>
 
-<h4>🚨 SOS Requests</h4>
+    {% endif %}
 
-{% if sos_requests %}
+</div>
 
-    {% for sos in sos_requests %}
 
-    <div class="card mb-3 border-danger">
 
-        <div class="card-body">
+<!-- =====================================================
+     SESSION INFORMATION
+     ===================================================== -->
 
-            <h5 class="text-danger">
-                🚨 Urgent Help Request
-            </h5>
+<div
+    class="card"
+    style="margin-bottom: 22px;"
+>
 
-            <p>
-                <strong>Student ID:</strong>
-                {{ sos.requester_id }}
-            </p>
+    <div style="
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
+    ">
 
-            <p>
-                <strong>Doubt:</strong>
-                {{ sos.message }}
-            </p>
 
-            <p>
-                <strong>Status:</strong>
-                {{ sos.status }}
-            </p>
+        <!-- DATE -->
 
-            {% if sos.status == "open" %}
+        <div>
 
-                {% if current_user.id != sos.requester_id %}
+            <span class="card-muted">
+                <i class="fa-regular fa-calendar"></i>
+                Date
+            </span>
 
-                <form method="post"
-                      action="{{ url_for('sos.help_request', rid=sos.id) }}"
-                      class="d-inline">
+            <strong
+                style="
+                    display: block;
+                    margin-top: 5px;
+                "
+            >
+                {{ session.date }}
+            </strong>
 
-                    <button class="btn btn-success">
-                        🙋 I Can Help
-                    </button>
+        </div>
 
-                </form>
 
-                {% else %}
+        <!-- TIME -->
 
-                <form method="post"
-                      action="{{ url_for('sos.resolve', rid=sos.id) }}"
-                      class="d-inline">
+        <div>
 
-                    <button class="btn btn-primary">
-                        ✓ Mark Resolved
-                    </button>
+            <span class="card-muted">
+                <i class="fa-regular fa-clock"></i>
+                Time
+            </span>
 
-                </form>
+            <strong
+                style="
+                    display: block;
+                    margin-top: 5px;
+                "
+            >
+                {{ session.time }}
+            </strong>
 
-                {% endif %}
+        </div>
+
+
+        <!-- VENUE -->
+
+        <div>
+
+            <span class="card-muted">
+                <i class="fa-solid fa-location-dot"></i>
+                Venue
+            </span>
+
+            <strong
+                style="
+                    display: block;
+                    margin-top: 5px;
+                "
+            >
+                {{ session.venue }}
+            </strong>
+
+        </div>
+
+
+        <!-- CAPACITY -->
+
+        <div>
+
+            <span class="card-muted">
+                <i class="fa-solid fa-users"></i>
+                Capacity
+            </span>
+
+            <strong
+                style="
+                    display: block;
+                    margin-top: 5px;
+                "
+            >
+                {{ participants|length }}
+                /
+                {{ session.max_participants }}
+                students
+            </strong>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =================================================
+         SESSION ACTIONS
+         ================================================= -->
+
+    <div style="
+        border-top: 1px solid var(--border);
+        margin-top: 20px;
+        padding-top: 17px;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        flex-wrap: wrap;
+    ">
+
+
+        {% if session.status == "active" %}
+
+
+            <!-- JOIN -->
+
+            <form
+                method="post"
+                action="{{ url_for(
+                    'study_sessions.join',
+                    sid=session.id
+                ) }}"
+                style="margin: 0;"
+            >
+
+                <button class="btn btn-success">
+
+                    <i class="fa-solid fa-user-plus"></i>
+
+                    Join Session
+
+                </button>
+
+            </form>
+
+
+
+            <!-- LEAVE -->
+
+            <form
+                method="post"
+                action="{{ url_for(
+                    'study_sessions.leave',
+                    sid=session.id
+                ) }}"
+                style="margin: 0;"
+            >
+
+                <button class="btn btn-secondary">
+
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+
+                    Leave
+
+                </button>
+
+            </form>
+
+
+        {% endif %}
+
+
+
+        <!-- CREATOR CONTROLS -->
+
+        {% if current_user.id == session.creator_id %}
+
+
+            <!-- EDIT -->
+
+            <a
+                class="btn btn-secondary"
+                href="{{ url_for(
+                    'study_sessions.edit',
+                    sid=session.id
+                ) }}"
+            >
+
+                <i class="fa-solid fa-pen"></i>
+
+                Edit
+
+            </a>
+
+
+
+            <!-- CANCEL -->
+
+            <form
+                method="post"
+                action="{{ url_for(
+                    'study_sessions.cancel',
+                    sid=session.id
+                ) }}"
+                style="margin: 0;"
+            >
+
+                <button class="btn btn-danger">
+
+                    <i class="fa-solid fa-ban"></i>
+
+                    Cancel Session
+
+                </button>
+
+            </form>
+
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     MAIN SESSION GRID
+     ===================================================== -->
+
+<div style="
+    display: grid;
+    grid-template-columns:
+        minmax(0, 1.6fr)
+        minmax(280px, .7fr);
+    gap: 22px;
+">
+
+
+    <!-- =================================================
+         LEFT COLUMN
+         ================================================= -->
+
+    <div>
+
+
+        <!-- =================================================
+             PARTICIPANTS
+             ================================================= -->
+
+        <div
+            class="card"
+            style="margin-bottom: 22px;"
+        >
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2 class="section-title">
+
+                        <i
+                            class="fa-solid fa-user-group"
+                            style="color: var(--primary);"
+                        ></i>
+
+                        Participants
+
+                    </h2>
+
+
+                    <span class="card-muted">
+                        Students currently participating in this session
+                    </span>
+
+                </div>
+
+
+                <span class="badge">
+
+                    <i class="fa-solid fa-users"></i>
+
+                    {{ participants|length }}
+                    joined
+
+                </span>
+
+            </div>
+
+
+
+            {% if participants %}
+
+
+                <div style="
+                    display: grid;
+                    gap: 9px;
+                ">
+
+
+                    {% for p in participants %}
+
+
+                        {% set student =
+                            participant_users.get(p.user_id)
+                        %}
+
+
+                        <div style="
+                            display: flex;
+                            align-items: center;
+                            gap: 12px;
+                            padding: 12px;
+                            border-radius: 10px;
+                            background: var(--surface-soft);
+                        ">
+
+
+                            <!-- STUDENT AVATAR -->
+
+                            <div
+                                class="avatar"
+                                style="
+                                    width: 38px;
+                                    height: 38px;
+                                    min-width: 38px;
+                                    font-size: 13px;
+                                "
+                            >
+
+                                {% if student and student.name %}
+
+                                    {{ student.name[0]|upper }}
+
+                                {% else %}
+
+                                    S
+
+                                {% endif %}
+
+                            </div>
+
+
+
+                            <!-- STUDENT DETAILS -->
+
+                            <div style="min-width: 0;">
+
+
+                                <div style="
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 6px;
+                                    flex-wrap: wrap;
+                                    margin-bottom: 2px;
+                                ">
+
+
+                                    <strong style="
+                                        font-size: 13px;
+                                    ">
+
+                                        {% if student %}
+
+                                            {{ student.name }}
+
+                                        {% else %}
+
+                                            Student
+
+                                        {% endif %}
+
+                                    </strong>
+
+
+
+                                    <!-- HOST BADGE -->
+
+                                    {% if p.user_id == session.creator_id %}
+
+                                        <span
+                                            class="badge badge-blue"
+                                            style="
+                                                font-size: 9px;
+                                                padding: 3px 6px;
+                                            "
+                                        >
+
+                                            <i class="fa-solid fa-crown"></i>
+
+                                            Host
+
+                                        </span>
+
+                                    {% endif %}
+
+
+                                    <!-- CURRENT USER -->
+
+                                    {% if p.user_id == current_user.id %}
+
+                                        <span
+                                            class="badge"
+                                            style="
+                                                font-size: 9px;
+                                                padding: 3px 6px;
+                                            "
+                                        >
+                                            You
+                                        </span>
+
+                                    {% endif %}
+
+
+                                </div>
+
+
+
+                                <!-- ACADEMIC DETAILS -->
+
+                                <span class="card-muted">
+
+                                    {% if student %}
+
+
+                                        {% if student.department %}
+
+                                            {{ student.department }}
+
+                                        {% endif %}
+
+
+                                        {% if student.department and student.year %}
+
+                                            •
+
+                                        {% endif %}
+
+
+                                        {% if student.year %}
+
+                                            Year {{ student.year }}
+
+                                        {% endif %}
+
+
+                                        {% if not student.department and not student.year %}
+
+                                            Verified Student
+
+                                        {% endif %}
+
+
+                                    {% else %}
+
+                                        Study Buddy Member
+
+                                    {% endif %}
+
+                                </span>
+
+                            </div>
+
+
+
+                            <!-- JOINED BADGE -->
+
+                            <span
+                                class="badge badge-success"
+                                style="
+                                    margin-left: auto;
+                                    white-space: nowrap;
+                                "
+                            >
+
+                                <i class="fa-solid fa-circle-check"></i>
+
+                                Joined
+
+                            </span>
+
+                        </div>
+
+
+                    {% endfor %}
+
+
+                </div>
+
 
             {% else %}
 
-                <span class="badge bg-success">
-                    Resolved
-                </span>
+
+                <!-- EMPTY PARTICIPANTS -->
+
+                <div style="
+                    padding: 25px;
+                    text-align: center;
+                    border-radius: 12px;
+                    background: var(--surface-soft);
+                ">
+
+                    <i
+                        class="fa-solid fa-users"
+                        style="
+                            color: var(--muted);
+                            font-size: 24px;
+                            margin-bottom: 8px;
+                        "
+                    ></i>
+
+
+                    <p
+                        class="card-muted"
+                        style="margin: 0;"
+                    >
+                        No students have joined this session yet.
+                    </p>
+
+                </div>
+
+
+            {% endif %}
+
+        </div>
+
+
+
+        <!-- =================================================
+             SOS REQUESTS
+             ================================================= -->
+
+        <div class="card">
+
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2 class="section-title">
+
+                        <i
+                            class="fa-solid fa-hand-holding-heart"
+                            style="color: var(--danger);"
+                        ></i>
+
+                        SOS Help Requests
+
+                    </h2>
+
+
+                    <span class="card-muted">
+                        Peer-to-peer urgent doubt assistance
+                    </span>
+
+                </div>
+
+
+                {% if sos_requests %}
+
+                    <span class="badge badge-danger">
+
+                        {{ sos_requests|length }}
+
+                        request{% if sos_requests|length != 1 %}s{% endif %}
+
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+
+
+            {% if sos_requests %}
+
+
+                <div style="
+                    display: grid;
+                    gap: 13px;
+                ">
+
+
+                    {% for sos in sos_requests %}
+
+
+                        {% set requester =
+                            sos_users.get(sos.requester_id)
+                        %}
+
+
+                        <div style="
+                            padding: 17px;
+                            border-radius: 13px;
+
+                            border:
+                                1px solid
+                                {% if sos.status == 'open' %}
+                                    #ffd4da
+                                {% else %}
+                                    #d6eee3
+                                {% endif %};
+
+                            background:
+                                {% if sos.status == 'open' %}
+                                    var(--danger-soft)
+                                {% else %}
+                                    var(--success-soft)
+                                {% endif %};
+                        ">
+
+
+                            <!-- SOS HEADER -->
+
+                            <div style="
+                                display: flex;
+                                justify-content: space-between;
+                                gap: 10px;
+                                align-items: flex-start;
+                            ">
+
+
+                                <div>
+
+
+                                    <strong style="
+                                        display: block;
+                                        margin-bottom: 5px;
+                                    ">
+
+
+                                        {% if sos.status == "open" %}
+
+                                            <i class="fa-solid fa-circle-question"></i>
+
+                                            Help needed
+
+                                        {% else %}
+
+                                            <i class="fa-solid fa-circle-check"></i>
+
+                                            Doubt resolved
+
+                                        {% endif %}
+
+                                    </strong>
+
+
+
+                                    <!-- REQUESTER -->
+
+                                    <span style="
+                                        font-size: 11px;
+                                        color: var(--muted);
+                                    ">
+
+                                        Requested by
+
+                                        <strong>
+
+                                            {% if requester %}
+
+                                                {{ requester.name }}
+
+                                            {% else %}
+
+                                                Student
+
+                                            {% endif %}
+
+                                        </strong>
+
+
+                                        {% if requester and requester.department %}
+
+                                            • {{ requester.department }}
+
+                                        {% endif %}
+
+                                    </span>
+
+                                </div>
+
+
+
+                                <!-- SOS STATUS -->
+
+                                {% if sos.status == "open" %}
+
+                                    <span class="badge badge-danger">
+
+                                        <i class="fa-solid fa-circle"></i>
+
+                                        Open
+
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge badge-success">
+
+                                        <i class="fa-solid fa-circle-check"></i>
+
+                                        Resolved
+
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+
+
+                            <!-- SOS MESSAGE -->
+
+                            <p style="
+                                margin: 14px 0;
+                                font-size: 13px;
+                                line-height: 1.6;
+                            ">
+
+                                {{ sos.message }}
+
+                            </p>
+
+
+
+                            <!-- SOS ACTIONS -->
+
+                            {% if sos.status == "open" %}
+
+
+                                <!-- ANOTHER STUDENT CAN HELP -->
+
+                                {% if current_user.id != sos.requester_id %}
+
+
+                                    <form
+                                        method="post"
+                                        action="{{ url_for(
+                                            'sos.help_request',
+                                            rid=sos.id
+                                        ) }}"
+                                        style="margin: 0;"
+                                    >
+
+                                        <button
+                                            class="btn btn-success btn-sm"
+                                        >
+
+                                            <i class="fa-solid fa-hand"></i>
+
+                                            I Can Help
+
+                                        </button>
+
+                                    </form>
+
+
+
+                                <!-- REQUESTER CAN RESOLVE -->
+
+                                {% else %}
+
+
+                                    <form
+                                        method="post"
+                                        action="{{ url_for(
+                                            'sos.resolve',
+                                            rid=sos.id
+                                        ) }}"
+                                        style="margin: 0;"
+                                    >
+
+                                        <button class="btn btn-sm">
+
+                                            <i class="fa-solid fa-check"></i>
+
+                                            Mark Resolved
+
+                                        </button>
+
+                                    </form>
+
+
+                                {% endif %}
+
+
+                            {% endif %}
+
+                        </div>
+
+
+                    {% endfor %}
+
+
+                </div>
+
+
+            {% else %}
+
+
+                <!-- EMPTY SOS STATE -->
+
+                <div style="
+                    padding: 28px;
+                    text-align: center;
+                    border-radius: 12px;
+                    background: var(--surface-soft);
+                ">
+
+
+                    <div
+                        class="stat-icon green"
+                        style="
+                            margin: 0 auto 10px;
+                        "
+                    >
+
+                        <i class="fa-solid fa-circle-check"></i>
+
+                    </div>
+
+
+                    <strong style="
+                        display: block;
+                        margin-bottom: 3px;
+                    ">
+                        Everything's clear
+                    </strong>
+
+
+                    <span class="card-muted">
+                        There are no active SOS requests in this session.
+                    </span>
+
+                </div>
+
 
             {% endif %}
 
@@ -129,34 +910,314 @@
 
     </div>
 
-    {% endfor %}
 
-{% else %}
 
-<p class="text-muted">
-    No active SOS requests.
-</p>
+    <!-- =================================================
+         RIGHT COLUMN
+         ================================================= -->
 
-{% endif %}
+    <div>
 
-<hr>
 
-<h4>🚨 Need urgent help?</h4>
+        <!-- =================================================
+             SOS FORM
+             ================================================= -->
 
-<form method="post"
-      action="{{ url_for('sos.raise_sos', sid=session.id) }}">
+        {% if session.status == "active" %}
 
-    <textarea
-        class="form-control mb-2"
-        name="message"
-        placeholder="Describe your doubt"
-        required>
-    </textarea>
 
-    <button class="btn btn-danger">
-        Send SOS
-    </button>
+            <div
+                class="card"
+                style="
+                    border: 1px solid #ffd8dd;
+                    background:
+                        linear-gradient(
+                            145deg,
+                            #fff8f9,
+                            #ffffff
+                        );
+                    margin-bottom: 20px;
+                "
+            >
 
-</form>
+
+                <div
+                    class="stat-icon"
+                    style="
+                        background: var(--danger-soft);
+                        color: var(--danger);
+                        margin-bottom: 14px;
+                    "
+                >
+
+                    <i class="fa-solid fa-life-ring"></i>
+
+                </div>
+
+
+                <h3 style="
+                    font-size: 17px;
+                    margin-bottom: 6px;
+                ">
+                    Stuck on something?
+                </h3>
+
+
+                <p class="card-muted">
+                    Send an SOS to ask students in this session
+                    for urgent help with an academic doubt.
+                </p>
+
+
+
+                <form
+                    method="post"
+                    action="{{ url_for(
+                        'sos.raise_sos',
+                        sid=session.id
+                    ) }}"
+                >
+
+
+                    <div class="form-group">
+
+                        <textarea
+                            name="message"
+                            placeholder="Describe the concept or question you need help with..."
+                            required
+                            style="min-height: 100px;"
+                        ></textarea>
+
+                    </div>
+
+
+                    <button
+                        class="btn btn-danger"
+                        style="width: 100%;"
+                    >
+
+                        <i class="fa-solid fa-paper-plane"></i>
+
+                        Send SOS Request
+
+                    </button>
+
+                </form>
+
+
+
+                <div style="
+                    margin-top: 13px;
+                    font-size: 10px;
+                    color: var(--muted);
+                    text-align: center;
+                ">
+
+                    <i class="fa-solid fa-circle-info"></i>
+
+                    SOS is for urgent academic doubts
+                    within the study session.
+
+                </div>
+
+            </div>
+
+
+        {% endif %}
+
+
+
+        <!-- =================================================
+             SESSION SUMMARY
+             ================================================= -->
+
+        <div
+            class="card"
+            style="margin-bottom: 20px;"
+        >
+
+            <h3 class="card-title">
+
+                <i
+                    class="fa-solid fa-chart-simple"
+                    style="color: var(--primary);"
+                ></i>
+
+                Session Summary
+
+            </h3>
+
+
+            <div style="
+                display: grid;
+                gap: 12px;
+                margin-top: 17px;
+            ">
+
+
+                <div style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                ">
+
+                    <span class="card-muted">
+                        Participants
+                    </span>
+
+                    <strong>
+                        {{ participants|length }}
+                        /
+                        {{ session.max_participants }}
+                    </strong>
+
+                </div>
+
+
+                <div style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                ">
+
+                    <span class="card-muted">
+                        SOS Requests
+                    </span>
+
+                    <strong>
+                        {{ sos_requests|length }}
+                    </strong>
+
+                </div>
+
+
+                <div style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                ">
+
+                    <span class="card-muted">
+                        Status
+                    </span>
+
+
+                    {% if session.status == "active" %}
+
+                        <span class="badge badge-success">
+                            Active
+                        </span>
+
+                    {% else %}
+
+                        <span class="badge badge-danger">
+                            {{ session.status|title }}
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             SESSION GUIDE
+             ================================================= -->
+
+        <div class="card">
+
+
+            <h3 class="card-title">
+
+                <i
+                    class="fa-solid fa-circle-info"
+                    style="color: var(--primary);"
+                ></i>
+
+                Session Guide
+
+            </h3>
+
+
+            <div style="
+                display: grid;
+                gap: 13px;
+                margin-top: 17px;
+                color: var(--muted);
+                font-size: 12px;
+            ">
+
+
+                <div>
+
+                    <i
+                        class="fa-solid fa-check"
+                        style="
+                            color: var(--success);
+                            width: 20px;
+                        "
+                    ></i>
+
+                    Join sessions relevant to your subjects.
+
+                </div>
+
+
+                <div>
+
+                    <i
+                        class="fa-solid fa-check"
+                        style="
+                            color: var(--success);
+                            width: 20px;
+                        "
+                    ></i>
+
+                    Use SOS when you need immediate academic help.
+
+                </div>
+
+
+                <div>
+
+                    <i
+                        class="fa-solid fa-check"
+                        style="
+                            color: var(--success);
+                            width: 20px;
+                        "
+                    ></i>
+
+                    Help peers when you know the solution.
+
+                </div>
+
+
+                <div>
+
+                    <i
+                        class="fa-solid fa-check"
+                        style="
+                            color: var(--success);
+                            width: 20px;
+                        "
+                    ></i>
+
+                    Mark your SOS as resolved after receiving help.
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
 
 {% endblock %}

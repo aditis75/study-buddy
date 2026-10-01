@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, redirect, url_for
 from flask_login import login_required, current_user
 
 from .models import (
@@ -8,13 +8,20 @@ from .models import (
     SOSRequest,
 )
 
+
 bp = Blueprint("dashboard", __name__)
 
 
 @bp.route("/")
 @login_required
 def home():
-    # Sessions joined by the logged-in student
+
+    # Admins should use the Admin Control Center,
+    # not the normal student dashboard.
+    if current_user.role == "admin":
+        return redirect(url_for("admin.panel"))
+
+    # Get sessions joined by the current student.
     joined_records = SessionParticipant.query.filter_by(
         user_id=current_user.id
     ).all()
@@ -32,19 +39,19 @@ def home():
             StudySession.status == "active",
         ).all()
 
-    # Sessions created by the student
+    # Get active sessions created by the current student.
     created_sessions = StudySession.query.filter_by(
         creator_id=current_user.id,
         status="active",
     ).all()
 
-    # Unread notifications
+    # Count unread notifications.
     unread_notifications = Notification.query.filter_by(
         student_id=current_user.id,
         is_read=False,
     ).count()
 
-    # Open SOS requests created by the student
+    # Count open SOS requests created by the student.
     open_sos = SOSRequest.query.filter_by(
         requester_id=current_user.id,
         status="open",

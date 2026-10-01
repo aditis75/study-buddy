@@ -1,15 +1,239 @@
 {% extends "base.html" %}
-{% block title %}Profile{% endblock %}
+
+{% block title %}My Profile | Study Buddy{% endblock %}
+
 {% block content %}
-<h2>My Profile</h2>
-<form method="post">
-  <input class="form-control mb-3" name="name" value="{{ current_user.name }}" placeholder="Name" required>
-  <input class="form-control mb-3" name="department" value="{{ current_user.department or '' }}" placeholder="Department">
-  <input class="form-control mb-3" name="year" type="number" value="{{ current_user.year or '' }}" placeholder="Year">
-  <input class="form-control mb-3" name="subjects" value="{{ current_user.subjects or '' }}" placeholder="Subjects, comma separated">
-  <textarea class="form-control mb-3" name="study_preferences" placeholder="Study preferences">{{ current_user.study_preferences or '' }}</textarea>
-  <textarea class="form-control mb-3" name="availability" placeholder="Availability">{{ current_user.availability or '' }}</textarea>
-  <textarea class="form-control mb-3" name="interests" placeholder="Interests">{{ current_user.interests or '' }}</textarea>
-  <button class="btn btn-primary">Save Profile</button>
-</form>
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">My Profile</h1>
+        <p class="page-subtitle">
+            Tell Study Buddy how you learn so other students can find the right study partner.
+        </p>
+    </div>
+
+    <span class="badge badge-success">
+        <i class="fa-solid fa-circle-check"></i>
+        Verified Student
+    </span>
+</div>
+
+
+<div class="grid grid-3">
+
+    <!-- PROFILE SUMMARY -->
+
+    <div class="card" style="align-self: start; text-align: center;">
+
+        <div style="
+            width: 88px;
+            height: 88px;
+            margin: 5px auto 16px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary), var(--blue));
+            color: white;
+            font-family: Manrope, sans-serif;
+            font-size: 32px;
+            font-weight: 800;
+            box-shadow: 0 12px 30px rgba(102,87,232,.25);
+        ">
+            {{ current_user.name[0]|upper }}
+        </div>
+
+        <h2 style="font-size: 20px; margin-bottom: 3px;">
+            {{ current_user.name }}
+        </h2>
+
+        <p class="card-muted" style="margin-top: 0;">
+            {{ current_user.email }}
+        </p>
+
+        <div style="
+            display: flex;
+            justify-content: center;
+            gap: 7px;
+            flex-wrap: wrap;
+            margin: 17px 0;
+        ">
+            {% if current_user.department %}
+                <span class="badge">
+                    <i class="fa-solid fa-code"></i>
+                    {{ current_user.department }}
+                </span>
+            {% endif %}
+
+            {% if current_user.year %}
+                <span class="badge badge-blue">
+                    Year {{ current_user.year }}
+                </span>
+            {% endif %}
+        </div>
+
+        <div style="
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 12px;
+            background: var(--success-soft);
+            color: var(--success);
+            font-size: 12px;
+            text-align: left;
+        ">
+            <i class="fa-solid fa-shield-halved"></i>
+            <strong> College account</strong><br>
+            <span style="opacity: .8;">
+                Your student profile is part of the verified Study Buddy community.
+            </span>
+        </div>
+
+    </div>
+
+
+    <!-- EDIT PROFILE -->
+
+    <div class="card" style="grid-column: span 2;">
+
+        <div style="margin-bottom: 24px;">
+            <h2 class="card-title" style="font-size: 19px;">
+                Academic & Study Profile
+            </h2>
+
+            <p class="card-muted" style="margin: 4px 0 0;">
+                These details help other students discover compatible study buddies.
+            </p>
+        </div>
+
+
+        <form method="post">
+
+            <div class="grid grid-2">
+
+                <div class="form-group">
+                    <label>
+                        <i class="fa-regular fa-user"></i>
+                        Full Name
+                    </label>
+
+                    <input
+                        name="name"
+                        value="{{ current_user.name }}"
+                        placeholder="Your full name"
+                        required
+                    >
+                </div>
+
+
+                <div class="form-group">
+                    <label>
+                        <i class="fa-solid fa-building-columns"></i>
+                        Department
+                    </label>
+
+                    <input
+                        name="department"
+                        value="{{ current_user.department or '' }}"
+                        placeholder="e.g. Computer Science"
+                    >
+                </div>
+
+            </div>
+
+
+            <div class="grid grid-2">
+
+                <div class="form-group">
+                    <label>
+                        <i class="fa-solid fa-layer-group"></i>
+                        Academic Year
+                    </label>
+
+                    <input
+                        name="year"
+                        type="number"
+                        min="1"
+                        max="6"
+                        value="{{ current_user.year or '' }}"
+                        placeholder="e.g. 3"
+                    >
+                </div>
+
+
+                <div class="form-group">
+                    <label>
+                        <i class="fa-solid fa-book"></i>
+                        Subjects
+                    </label>
+
+                    <input
+                        name="subjects"
+                        value="{{ current_user.subjects or '' }}"
+                        placeholder="DBMS, AI, Cloud Computing"
+                    >
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+                <label>
+                    <i class="fa-solid fa-brain"></i>
+                    Study Preferences
+                </label>
+
+                <textarea
+                    name="study_preferences"
+                    placeholder="Example: Group discussions, problem solving, evening study sessions..."
+                >{{ current_user.study_preferences or '' }}</textarea>
+            </div>
+
+
+            <div class="grid grid-2">
+
+                <div class="form-group">
+                    <label>
+                        <i class="fa-regular fa-clock"></i>
+                        Availability
+                    </label>
+
+                    <textarea
+                        name="availability"
+                        placeholder="Example: Weekdays after 5 PM"
+                    >{{ current_user.availability or '' }}</textarea>
+                </div>
+
+
+                <div class="form-group">
+                    <label>
+                        <i class="fa-regular fa-star"></i>
+                        Interests
+                    </label>
+
+                    <textarea
+                        name="interests"
+                        placeholder="Example: AI, coding, web development..."
+                    >{{ current_user.interests or '' }}</textarea>
+                </div>
+
+            </div>
+
+
+            <div style="
+                display: flex;
+                justify-content: flex-end;
+                padding-top: 5px;
+            ">
+                <button type="submit" class="btn">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    Save Profile
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
 {% endblock %}

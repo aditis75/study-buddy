@@ -1,90 +1,563 @@
 {% extends "base.html" %}
 
+{% block title %}Dashboard | Study Buddy{% endblock %}
+
 {% block content %}
 
-<h2>Welcome, {{ current_user.name }} 👋</h2>
-<p>Your Study Buddy dashboard</p>
+<!-- ================= HERO ================= -->
 
-<hr>
+<section class="hero-card">
 
-<h3>Overview</h3>
+    <div style="position: relative; z-index: 2; max-width: 720px;">
 
-<div style="display: flex; gap: 20px; flex-wrap: wrap;">
+        <span class="badge" style="
+            background: rgba(255,255,255,0.12);
+            color: #ffffff;
+            margin-bottom: 14px;
+        ">
+            <i class="fa-solid fa-bolt"></i>
+            YOUR STUDY SPACE
+        </span>
 
-    <div style="border: 1px solid #ccc; padding: 20px; width: 180px;">
-        <h4>Joined Sessions</h4>
-        <h2>{{ joined_sessions|length }}</h2>
-    </div>
+        <h1 style="
+            font-size: 32px;
+            margin-bottom: 8px;
+        ">
+            Welcome back, {{ current_user.name }}!
+        </h1>
 
-    <div style="border: 1px solid #ccc; padding: 20px; width: 180px;">
-        <h4>Created Sessions</h4>
-        <h2>{{ created_sessions|length }}</h2>
-    </div>
+        <p style="
+            margin: 0;
+            max-width: 610px;
+            font-size: 15px;
+        ">
+            Connect with students, collaborate on difficult topics
+            and make every study session count.
+        </p>
 
-    <div style="border: 1px solid #ccc; padding: 20px; width: 180px;">
-        <h4>Unread Notifications</h4>
-        <h2>{{ unread_notifications }}</h2>
-    </div>
+        <div style="
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 22px;
+        ">
 
-    <div style="border: 1px solid #ccc; padding: 20px; width: 180px;">
-        <h4>Open SOS</h4>
-        <h2>{{ open_sos }}</h2>
-    </div>
+            <a
+                href="{{ url_for('study_sessions.create') }}"
+                class="btn"
+                style="
+                    background: #ffffff;
+                    color: #5145cd;
+                "
+            >
+                <i class="fa-solid fa-plus"></i>
+                Create Session
+            </a>
 
-</div>
-
-<hr>
-
-<h3>My Active Study Sessions</h3>
-
-{% if joined_sessions %}
-
-    {% for session in joined_sessions %}
-
-        <div style="border: 1px solid #ddd; padding: 15px; margin-bottom: 10px;">
-
-            <strong>{{ session.subject }}</strong>
-
-            <p>
-                Date: {{ session.date }} <br>
-                Time: {{ session.time }} <br>
-                Venue: {{ session.venue }}
-            </p>
-
-            <a href="{{ url_for('study_sessions.detail', sid=session.id) }}">
-                View Session
+            <a
+                href="{{ url_for('buddies.find') }}"
+                class="btn"
+                style="
+                    background: rgba(255,255,255,0.10);
+                    border: 1px solid rgba(255,255,255,0.20);
+                "
+            >
+                <i class="fa-solid fa-user-group"></i>
+                Find a Study Buddy
             </a>
 
         </div>
 
-    {% endfor %}
+    </div>
 
-{% else %}
+</section>
 
-    <p>You have not joined any active study sessions.</p>
 
-{% endif %}
+<!-- ================= OVERVIEW ================= -->
 
-<hr>
+<div class="section-header">
 
-<h3>Quick Actions</h3>
+    <div>
+        <h2 class="section-title">
+            Your Overview
+        </h2>
 
-<p>
-    <a href="{{ url_for('study_sessions.create') }}">
-        Create Study Session
-    </a>
-</p>
+        <span class="card-muted">
+            A quick look at your Study Buddy activity
+        </span>
+    </div>
 
-<p>
-    <a href="{{ url_for('study_sessions.list_sessions') }}">
-        Browse Study Sessions
-    </a>
-</p>
+</div>
 
-<p>
-    <a href="{{ url_for('notifications.list_notifications') }}">
-        View Notifications
-    </a>
-</p>
+
+<div class="grid grid-4">
+
+    <!-- Joined -->
+
+    <div class="stat-card">
+
+        <div class="stat-header">
+
+            <span class="stat-label">
+                Joined Sessions
+            </span>
+
+            <div class="stat-icon">
+                <i class="fa-solid fa-users"></i>
+            </div>
+
+        </div>
+
+        <div class="stat-value">
+            {{ joined_sessions|length }}
+        </div>
+
+        <span class="card-muted">
+            Active collaborations
+        </span>
+
+    </div>
+
+
+    <!-- Created -->
+
+    <div class="stat-card">
+
+        <div class="stat-header">
+
+            <span class="stat-label">
+                Created Sessions
+            </span>
+
+            <div class="stat-icon blue">
+                <i class="fa-solid fa-calendar-plus"></i>
+            </div>
+
+        </div>
+
+        <div class="stat-value">
+            {{ created_sessions|length }}
+        </div>
+
+        <span class="card-muted">
+            Sessions organized by you
+        </span>
+
+    </div>
+
+
+    <!-- Notifications -->
+
+    <div class="stat-card">
+
+        <div class="stat-header">
+
+            <span class="stat-label">
+                Notifications
+            </span>
+
+            <div class="stat-icon orange">
+                <i class="fa-solid fa-bell"></i>
+            </div>
+
+        </div>
+
+        <div class="stat-value">
+            {{ unread_notifications }}
+        </div>
+
+        <span class="card-muted">
+            Unread updates
+        </span>
+
+    </div>
+
+
+    <!-- SOS -->
+
+    <div class="stat-card">
+
+        <div class="stat-header">
+
+            <span class="stat-label">
+                Open SOS
+            </span>
+
+            <div class="stat-icon green">
+                <i class="fa-solid fa-hand-holding-heart"></i>
+            </div>
+
+        </div>
+
+        <div class="stat-value">
+            {{ open_sos }}
+        </div>
+
+        <span class="card-muted">
+            Active help requests
+        </span>
+
+    </div>
+
+</div>
+
+
+<!-- ================= QUICK ACTIONS ================= -->
+
+<section class="section">
+
+    <div class="section-header">
+
+        <div>
+            <h2 class="section-title">
+                Quick Actions
+            </h2>
+
+            <span class="card-muted">
+                Jump straight into your study workflow
+            </span>
+        </div>
+
+    </div>
+
+
+    <div class="quick-actions">
+
+        <a
+            href="{{ url_for('study_sessions.create') }}"
+            class="quick-action"
+        >
+
+            <div class="quick-action-icon">
+                <i class="fa-solid fa-plus"></i>
+            </div>
+
+            <strong>
+                Create Session
+            </strong>
+
+            <span>
+                Start a collaborative study session
+            </span>
+
+        </a>
+
+
+        <a
+            href="{{ url_for('buddies.find') }}"
+            class="quick-action"
+        >
+
+            <div
+                class="quick-action-icon"
+                style="
+                    background: var(--blue-soft);
+                    color: var(--blue);
+                "
+            >
+                <i class="fa-solid fa-user-group"></i>
+            </div>
+
+            <strong>
+                Find Buddies
+            </strong>
+
+            <span>
+                Discover students with shared subjects
+            </span>
+
+        </a>
+
+
+        <a
+            href="{{ url_for('forum.list_posts') }}"
+            class="quick-action"
+        >
+
+            <div
+                class="quick-action-icon"
+                style="
+                    background: var(--cyan-soft);
+                    color: var(--cyan);
+                "
+            >
+                <i class="fa-solid fa-comments"></i>
+            </div>
+
+            <strong>
+                Ask the Community
+            </strong>
+
+            <span>
+                Discuss concepts and solve doubts
+            </span>
+
+        </a>
+
+
+        <a
+            href="{{ url_for('resources.list_notes') }}"
+            class="quick-action"
+        >
+
+            <div
+                class="quick-action-icon"
+                style="
+                    background: var(--success-soft);
+                    color: var(--success);
+                "
+            >
+                <i class="fa-solid fa-book-open"></i>
+            </div>
+
+            <strong>
+                Resource Hub
+            </strong>
+
+            <span>
+                Explore notes and study material
+            </span>
+
+        </a>
+
+    </div>
+
+</section>
+
+
+<!-- ================= ACTIVE SESSIONS ================= -->
+
+<section class="section">
+
+    <div class="section-header">
+
+        <div>
+
+            <h2 class="section-title">
+                Active Study Sessions
+            </h2>
+
+            <span class="card-muted">
+                Your current collaborative learning spaces
+            </span>
+
+        </div>
+
+
+        <a
+            href="{{ url_for('study_sessions.list_sessions') }}"
+            class="btn btn-secondary btn-sm"
+        >
+            View All
+            <i class="fa-solid fa-arrow-right"></i>
+        </a>
+
+    </div>
+
+
+    {% if joined_sessions %}
+
+        <div class="grid grid-3">
+
+            {% for session in joined_sessions %}
+
+                <div class="card">
+
+                    <div style="
+                        display: flex;
+                        align-items: flex-start;
+                        justify-content: space-between;
+                        gap: 12px;
+                        margin-bottom: 16px;
+                    ">
+
+                        <div class="stat-icon blue">
+                            <i class="fa-solid fa-book"></i>
+                        </div>
+
+                        <span class="badge badge-success">
+                            <i class="fa-solid fa-circle"
+                               style="font-size: 6px;"></i>
+                            Active
+                        </span>
+
+                    </div>
+
+
+                    <h3 class="card-title">
+                        {{ session.subject }}
+                    </h3>
+
+
+                    <div style="
+                        display: grid;
+                        gap: 9px;
+                        margin: 16px 0;
+                        color: var(--muted);
+                        font-size: 13px;
+                    ">
+
+                        <div>
+                            <i
+                                class="fa-regular fa-calendar"
+                                style="
+                                    width: 22px;
+                                    color: var(--primary);
+                                "
+                            ></i>
+
+                            {{ session.date }}
+                        </div>
+
+
+                        <div>
+                            <i
+                                class="fa-regular fa-clock"
+                                style="
+                                    width: 22px;
+                                    color: var(--primary);
+                                "
+                            ></i>
+
+                            {{ session.time }}
+                        </div>
+
+
+                        <div>
+                            <i
+                                class="fa-solid fa-location-dot"
+                                style="
+                                    width: 22px;
+                                    color: var(--primary);
+                                "
+                            ></i>
+
+                            {{ session.venue }}
+                        </div>
+
+                    </div>
+
+
+                    <a
+                        href="{{ url_for(
+                            'study_sessions.detail',
+                            sid=session.id
+                        ) }}"
+                        class="btn btn-secondary btn-sm"
+                    >
+                        Open Session
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+
+    {% else %}
+
+        <div class="empty-state">
+
+            <div class="empty-icon">
+                <i class="fa-solid fa-calendar-days"></i>
+            </div>
+
+            <h3>
+                No active sessions yet
+            </h3>
+
+            <p>
+                Join an existing study session or create one
+                and invite students to learn together.
+            </p>
+
+            <div style="
+                display: flex;
+                justify-content: center;
+                gap: 10px;
+                flex-wrap: wrap;
+                margin-top: 18px;
+            ">
+
+                <a
+                    href="{{ url_for(
+                        'study_sessions.list_sessions'
+                    ) }}"
+                    class="btn btn-secondary"
+                >
+                    Browse Sessions
+                </a>
+
+                <a
+                    href="{{ url_for(
+                        'study_sessions.create'
+                    ) }}"
+                    class="btn"
+                >
+                    <i class="fa-solid fa-plus"></i>
+                    Create Session
+                </a>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+
+<!-- ================= STUDY TIP ================= -->
+
+<section class="section">
+
+    <div
+        class="card"
+        style="
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            background:
+                linear-gradient(
+                    90deg,
+                    #f7f6ff,
+                    #ffffff
+                );
+        "
+    >
+
+        <div
+            class="stat-icon"
+            style="
+                width: 50px;
+                height: 50px;
+                flex-shrink: 0;
+            "
+        >
+            <i class="fa-solid fa-lightbulb"></i>
+        </div>
+
+        <div>
+
+            <strong style="
+                display: block;
+                margin-bottom: 3px;
+            ">
+                Study smarter together
+            </strong>
+
+            <span class="card-muted">
+                Students often understand difficult concepts faster
+                when they explain them to each other. Use Study Buddy
+                to learn, teach and collaborate.
+            </span>
+
+        </div>
+
+    </div>
+
+</section>
 
 {% endblock %}
