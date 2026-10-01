@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Study Resources 📚</h2>
+
+<p>
+    Share and discover notes, presentations and study material.
+</p>
+
+<p>
+    <a href="{{ url_for('resources.upload') }}">
+        + Upload Resource
+    </a>
+</p>
+
+<hr>
+
+<h3>Find Resources</h3>
+
+<form
+    method="GET"
+    action="{{ url_for('resources.list_notes') }}"
+>
+
+    <label for="subject">
+        Subject
+    </label>
+
+    <input
+        type="text"
+        id="subject"
+        name="subject"
+        value="{{ subject }}"
+        placeholder="Example: DBMS"
+    >
+
+    <button type="submit">
+        Search
+    </button>
+
+    <a href="{{ url_for('resources.list_notes') }}">
+        Clear
+    </a>
+
+</form>
+
+<hr>
+
+<h3>Available Resources</h3>
+
+{% if resources %}
+
+    {% for resource in resources %}
+
+        <div style="
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 15px;
+        ">
+
+            <h3>
+                {{ resource.title }}
+            </h3>
+
+            <p>
+                <strong>Subject:</strong>
+                {{ resource.subject }}
+            </p>
+
+            <p>
+                <strong>Description:</strong>
+                {{ resource.description or "No description provided." }}
+            </p>
+
+            <p>
+                <strong>Uploaded by:</strong>
+
+                {% if users.get(resource.user_id) %}
+                    {{ users[resource.user_id].name }}
+                {% else %}
+                    Unknown Student
+                {% endif %}
+            </p>
+
+            <p>
+                <small>
+                    Uploaded: {{ resource.created_at }}
+                </small>
+            </p>
+
+            <a
+                href="{{ url_for(
+                    'resources.download',
+                    resource_id=resource.id
+                ) }}"
+            >
+                Download Resource
+            </a>
+
+        </div>
+
+    {% endfor %}
+
+{% else %}
+
+    <p>
+        No resources found.
+    </p>
+
+{% endif %}
+
+<hr>
+
+<p>
+    <a href="{{ url_for('dashboard.home') }}">
+        ← Back to Dashboard
+    </a>
+</p>
+
+{% endblock %}

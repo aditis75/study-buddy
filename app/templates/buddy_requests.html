@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Study Buddy Requests 👥</h2>
+
+<p>
+    <a href="{{ url_for('buddies.find') }}">
+        ← Find Study Buddies
+    </a>
+</p>
+
+<hr>
+
+<h3>Incoming Requests</h3>
+
+{% if incoming %}
+
+    {% for req in incoming %}
+
+        <div style="
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 15px;
+        ">
+
+            <h4>
+                {{ users[req.sender_id].name }}
+            </h4>
+
+            <p>
+                Department:
+                {{ users[req.sender_id].department or "Not specified" }}
+            </p>
+
+            <p>
+                Subjects:
+                {{ users[req.sender_id].subjects or "Not specified" }}
+            </p>
+
+            <p>
+                Status:
+                <strong>{{ req.status|capitalize }}</strong>
+            </p>
+
+            {% if req.status == "pending" %}
+
+                <form
+                    method="POST"
+                    action="{{ url_for('buddies.accept_request', request_id=req.id) }}"
+                    style="display: inline;"
+                >
+                    <button type="submit">
+                        Accept
+                    </button>
+                </form>
+
+                <form
+                    method="POST"
+                    action="{{ url_for('buddies.reject_request', request_id=req.id) }}"
+                    style="display: inline;"
+                >
+                    <button type="submit">
+                        Reject
+                    </button>
+                </form>
+
+            {% endif %}
+
+        </div>
+
+    {% endfor %}
+
+{% else %}
+
+    <p>No incoming study buddy requests.</p>
+
+{% endif %}
+
+<hr>
+
+<h3>Sent Requests</h3>
+
+{% if outgoing %}
+
+    {% for req in outgoing %}
+
+        <div style="
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 15px;
+        ">
+
+            <h4>
+                {{ users[req.receiver_id].name }}
+            </h4>
+
+            <p>
+                Status:
+                <strong>{{ req.status|capitalize }}</strong>
+            </p>
+
+        </div>
+
+    {% endfor %}
+
+{% else %}
+
+    <p>You haven't sent any study buddy requests.</p>
+
+{% endif %}
+
+{% endblock %}

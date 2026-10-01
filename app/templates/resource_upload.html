@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Upload Study Resource 📤</h2>
+
+<p>
+    Share notes, presentations or other useful study material.
+</p>
+
+<hr>
+
+<form
+    method="POST"
+    enctype="multipart/form-data"
+>
+
+    <label for="title">
+        <strong>Resource Title</strong>
+    </label>
+
+    <br>
+
+    <input
+        type="text"
+        id="title"
+        name="title"
+        placeholder="Example: DBMS Normalization Notes"
+        required
+    >
+
+    <br><br>
+
+    <label for="subject">
+        <strong>Subject</strong>
+    </label>
+
+    <br>
+
+    <input
+        type="text"
+        id="subject"
+        name="subject"
+        placeholder="Example: DBMS"
+        required
+    >
+
+    <br><br>
+
+    <label for="description">
+        <strong>Description</strong>
+    </label>
+
+    <br>
+
+    <textarea
+        id="description"
+        name="description"
+        rows="5"
+        placeholder="Briefly describe this resource..."
+        style="width: 100%; max-width: 600px;"
+    ></textarea>
+
+    <br><br>
+
+    <label for="file">
+        <strong>Select File</strong>
+    </label>
+
+    <br>
+
+    <input
+        type="file"
+        id="file"
+        name="file"
+        accept=".pdf,.doc,.docx,.ppt,.pptx,.txt"
+        required
+    >
+
+    <p>
+        <small>
+            Allowed: PDF, DOC, DOCX, PPT, PPTX, TXT.
+            Maximum size: 25 MB.
+        </small>
+    </p>
+
+    <button type="submit">
+        Upload Resource
+    </button>
+
+</form>
+
+<hr>
+
+<p>
+    <a href="{{ url_for('resources.list_notes') }}">
+        ← Back to Resources
+    </a>
+</p>
+
+{% endblock %}

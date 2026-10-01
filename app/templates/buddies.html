@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Find Study Buddies 👥</h2>
+
+<p>
+    Find students with similar subjects and study interests.
+</p>
+
+<p>
+    <a href="{{ url_for('buddies.requests') }}">
+        View My Study Requests
+    </a>
+</p>
+
+<hr>
+
+<h3>Search Filters</h3>
+
+<form method="GET" action="{{ url_for('buddies.find') }}">
+
+    <label for="department">Department</label>
+
+    <input
+        type="text"
+        id="department"
+        name="department"
+        value="{{ department }}"
+        placeholder="Example: CSE"
+    >
+
+    <br><br>
+
+    <label for="year">Year</label>
+
+    <select id="year" name="year">
+
+        <option value="">
+            Any Year
+        </option>
+
+        <option value="1" {% if year == 1 %}selected{% endif %}>
+            1st Year
+        </option>
+
+        <option value="2" {% if year == 2 %}selected{% endif %}>
+            2nd Year
+        </option>
+
+        <option value="3" {% if year == 3 %}selected{% endif %}>
+            3rd Year
+        </option>
+
+        <option value="4" {% if year == 4 %}selected{% endif %}>
+            4th Year
+        </option>
+
+    </select>
+
+    <br><br>
+
+    <label for="subject">Subject</label>
+
+    <input
+        type="text"
+        id="subject"
+        name="subject"
+        value="{{ subject }}"
+        placeholder="Example: DBMS"
+    >
+
+    <br><br>
+
+    <button type="submit">
+        Search Buddies
+    </button>
+
+    <a href="{{ url_for('buddies.find') }}">
+        Clear Filters
+    </a>
+
+</form>
+
+<hr>
+
+<h3>Available Study Buddies</h3>
+
+{% if buddies %}
+
+    {% for buddy in buddies %}
+
+        <div style="
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 15px;
+        ">
+
+            <h4>
+                {{ buddy.name }}
+            </h4>
+
+            <p>
+                <strong>Department:</strong>
+                {{ buddy.department or "Not specified" }}
+            </p>
+
+            <p>
+                <strong>Year:</strong>
+                {{ buddy.year or "Not specified" }}
+            </p>
+
+            <p>
+                <strong>Subjects:</strong>
+                {{ buddy.subjects or "Not specified" }}
+            </p>
+
+            <p>
+                <strong>Study Preference:</strong>
+                {{ buddy.study_preferences or "Not specified" }}
+            </p>
+
+            <p>
+                <strong>Availability:</strong>
+                {{ buddy.availability or "Not specified" }}
+            </p>
+
+            <p>
+                <strong>Interests:</strong>
+                {{ buddy.interests or "Not specified" }}
+            </p>
+
+
+            <!-- STUDY REQUEST SECTION -->
+
+            {% if request_status.get(buddy.id) %}
+
+                <p>
+                    <strong>Request Status:</strong>
+
+                    {% if request_status.get(buddy.id) == "pending" %}
+
+                        Pending
+
+                    {% elif request_status.get(buddy.id) == "accepted" %}
+
+                        Accepted
+
+                    {% elif request_status.get(buddy.id) == "rejected" %}
+
+                        Rejected
+
+                    {% else %}
+
+                        {{ request_status.get(buddy.id)|capitalize }}
+
+                    {% endif %}
+
+                </p>
+
+            {% else %}
+
+                <form
+                    method="POST"
+                    action="{{ url_for('buddies.send_request', user_id=buddy.id) }}"
+                >
+
+                    <button type="submit">
+                        Send Study Request
+                    </button>
+
+                </form>
+
+            {% endif %}
+
+        </div>
+
+    {% endfor %}
+
+{% else %}
+
+    <p>
+        No study buddies found matching your filters.
+    </p>
+
+{% endif %}
+
+<hr>
+
+<p>
+    <a href="{{ url_for('dashboard.home') }}">
+        ← Back to Dashboard
+    </a>
+</p>
+
+{% endblock %}

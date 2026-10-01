@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Discussion Forum 💬</h2>
+
+<p>
+    Ask questions, discuss subjects and help other students.
+</p>
+
+<p>
+    <a href="{{ url_for('forum.create_post') }}">
+        + Create New Discussion
+    </a>
+</p>
+
+<hr>
+
+<h3>Recent Discussions</h3>
+
+{% if posts %}
+
+    {% for post in posts %}
+
+        <div style="
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 15px;
+        ">
+
+            <h3>
+                {{ post.title }}
+            </h3>
+
+            <p>
+                <strong>Posted by:</strong>
+
+                {% if users.get(post.user_id) %}
+                    {{ users[post.user_id].name }}
+                {% else %}
+                    Unknown Student
+                {% endif %}
+            </p>
+
+            <p>
+                {{ post.content[:200] }}
+
+                {% if post.content|length > 200 %}
+                    ...
+                {% endif %}
+            </p>
+
+            <p>
+                <small>
+                    Posted: {{ post.created_at }}
+                </small>
+            </p>
+
+            <a href="{{ url_for('forum.view_post', post_id=post.id) }}">
+                View Discussion
+            </a>
+
+        </div>
+
+    {% endfor %}
+
+{% else %}
+
+    <p>
+        No discussions yet. Start the first discussion!
+    </p>
+
+{% endif %}
+
+<hr>
+
+<p>
+    <a href="{{ url_for('dashboard.home') }}">
+        ← Back to Dashboard
+    </a>
+</p>
+
+{% endblock %}

@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<p>
+    <a href="{{ url_for('forum.list_posts') }}">
+        ← Back to Forum
+    </a>
+</p>
+
+<hr>
+
+<h2>{{ post.title }}</h2>
+
+<p>
+    <strong>Posted by:</strong>
+
+    {% if author %}
+        {{ author.name }}
+    {% else %}
+        Unknown Student
+    {% endif %}
+</p>
+
+<p>
+    {{ post.content }}
+</p>
+
+<p>
+    <small>
+        Posted: {{ post.created_at }}
+    </small>
+</p>
+
+<hr>
+
+<h3>Comments</h3>
+
+{% if comments %}
+
+    {% for comment in comments %}
+
+        <div style="
+            border-left: 3px solid #ccc;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+        ">
+
+            <p>
+                <strong>
+                    {% if users.get(comment.user_id) %}
+                        {{ users[comment.user_id].name }}
+                    {% else %}
+                        Unknown Student
+                    {% endif %}
+                </strong>
+            </p>
+
+            <p>
+                {{ comment.content }}
+            </p>
+
+            <small>
+                {{ comment.created_at }}
+            </small>
+
+        </div>
+
+    {% endfor %}
+
+{% else %}
+
+    <p>
+        No comments yet. Be the first to reply.
+    </p>
+
+{% endif %}
+
+<hr>
+
+<h3>Add a Comment</h3>
+
+<form
+    method="POST"
+    action="{{ url_for('forum.add_comment', post_id=post.id) }}"
+>
+
+    <textarea
+        name="content"
+        rows="4"
+        placeholder="Write your reply..."
+        required
+        style="width: 100%; max-width: 600px;"
+    ></textarea>
+
+    <br><br>
+
+    <button type="submit">
+        Add Comment
+    </button>
+
+</form>
+
+{% endblock %}

@@ -1,4 +1,5 @@
 from app import create_app
+import io
 
 
 def test_app_starts(app):
@@ -674,3 +675,580 @@ def test_resolve_sos_request(client, app):
 
         assert notification is not None
         assert "marked resolved" in notification.message
+
+
+def test_dashboard_access(client, app):
+    from app.models import User
+    from app import db
+
+    with app.app_context():
+        user = User(
+            name="Dashboard Student",
+            email="dashboard@mitwpu.edu.in",
+            department="CSE",
+            year=3,
+            is_verified=True,
+        )
+        user.set_password("Valid@123")
+
+        db.session.add(user)
+        db.session.commit()
+
+    client.post(
+        "/login",
+        data={
+            "email": "dashboard@mitwpu.edu.in",
+            "password": "Valid@123",
+        },
+    )
+
+    response = client.get("/")
+
+    assert response.status_code == 200
+    assert b"Dashboard Student" in response.data
+
+
+def test_buddy_search(client, app):
+    from app.models import User
+    from app import db
+
+    with app.app_context():
+        user1 = User(
+            name="Buddy Searcher",
+            email="buddysearcher@mitwpu.edu.in",
+            department="CSE",
+            year=3,
+            subjects="DBMS, AI",
+            is_verified=True,
+        )
+        user1.set_password("Valid@123")
+
+        user2 = User(
+            name="Database Buddy",
+            email="databasebuddy@mitwpu.edu.in",
+            department="CSE",
+            year=3,
+            subjects="DBMS",
+            is_verified=True,
+        )
+        user2.set_password("Valid@123")
+
+        db.session.add_all([user1, user2])
+        db.session.commit()
+
+    client.post(
+        "/login",
+        data={
+            "email": "buddysearcher@mitwpu.edu.in",
+            "password": "Valid@123",
+        },
+    )
+
+    response = client.get(
+        "/buddies?department=CSE&year=3&subject=DBMS"
+    )
+
+    assert response.status_code == 200
+    assert b"Database Buddy" in response.data
+
+
+def test_send_buddy_request(client, app):
+    from app.models import User, StudyRequest, Notification
+    from app import db
+
+    with app.app_context():
+        sender = User(
+            name="Request Sender",
+            email="requestsender@mitwpu.edu.in",
+            is_verified=True,
+        )
+        sender.set_password("Valid@123")
+
+        receiver = User(
+            name="Request Receiver",
+            email="requestreceiver@mitwpu.edu.in",
+            is_verified=True,
+        )
+        receiver.set_password("Valid@123")
+
+        db.session.add_all([sender, receiver])
+        db.session.commit()
+
+        sender_id = sender.id
+        receiver_id = receiver.id
+
+    client.post(
+        "/login",
+        data={
+            "email": "requestsender@mitwpu.edu.in",
+            "password": "Valid@123",
+        },
+    )
+
+    response = client.post(
+        f"/buddies/request/{receiver_id}",
+        follow_redirects=False,
+    )
+
+    assert response.status_code == 302
+
+    with app.app_context():
+        study_request = StudyRequest.query.filter_by(
+            sender_id=sender_id,
+            receiver_id=receiver_id,
+        ).first()
+
+        assert study_request is not None
+        assert study_request.status == "pending"
+
+        notification = Notification.query.filter_by(
+            student_id=receiver_id,
+            type="buddy",
+        ).first()
+
+        assert notification is not None
+
+
+def test_accept_buddy_request(client, app):
+    from app.models import User, StudyRequest
+    from app import db
+
+    with app.app_context():
+        sender = User(
+            name="Buddy Sender",
+            email="buddysender@mitwpu.edu.in",
+            is_verified=True,
+        )
+        sender.set_password("Valid@123")
+
+        receiver = User(
+            name="Buddy Receiver",
+            email="buddyreceiver@mitwpu.edu.in",
+            is_verified=True,
+        )
+        receiver.set_password("Valid@123")
+
+        db.session.add_all([sender, receiver])
+        db.session.commit()
+
+        study_request = StudyRequest(
+            sender_id=sender.id,
+            receiver_id=receiver.id,
+            status="pending",
+        )
+
+        db.session.add(study_request)
+        db.session.commit()
+
+        request_id = study_request.id
+
+    client.post(
+        "/login",
+        data={
+            "email": "buddyreceiver@mitwpu.edu.in",
+            "password": "Valid@123",
+        },
+    )
+
+    response = client.post(
+        f"/buddies/request/{request_id}/accept",
+        follow_redirects=False,
+    )
+
+    assert response.status_code == 302
+
+    with app.app_context():
+        updated_request = db.session.get(
+            StudyRequest,
+            request_id,
+        )
+
+        assert updated_request.status == "accepted"
+
+
+def test_reject_buddy_request(client, app):
+    from app.models import User, StudyRequest
+    from app import db
+
+    with app.app_context():
+        sender = User(
+            name="Rejected Sender",
+            email="rejectsender@mitwpu.edu.in",
+            is_verified=True,
+        )
+        sender.set_password("Valid@123")
+
+        receiver = User(
+            name="Rejecting Receiver",
+            email="rejectreceiver@mitwpu.edu.in",
+            is_verified=True,
+        )
+        receiver.set_password("Valid@123")
+
+        db.session.add_all([sender, receiver])
+        db.session.commit()
+
+        study_request = StudyRequest(
+            sender_id=sender.id,
+            receiver_id=receiver.id,
+            status="pending",
+        )
+
+        db.session.add(study_request)
+        db.session.commit()
+
+        request_id = study_request.id
+
+    client.post(
+        "/login",
+        data={
+            "email": "rejectreceiver@mitwpu.edu.in",
+            "password": "Valid@123",
+        },
+    )
+
+    response = client.post(
+        f"/buddies/request/{request_id}/reject",
+        follow_redirects=False,
+    )
+
+    assert response.status_code == 302
+
+    with app.app_context():
+        updated_request = db.session.get(
+            StudyRequest,
+            request_id,
+        )
+
+        assert updated_request.status == "rejected"
+
+
+def test_create_forum_post(client, app):
+    from app.models import User, DiscussionPost
+    from app import db
+
+    with app.app_context():
+        user = User(
+            name="Forum Student",
+            email="forumstudent@mitwpu.edu.in",
+            is_verified=True,
+        )
+        user.set_password("Valid@123")
+
+        db.session.add(user)
+        db.session.commit()
+
+        user_id = user.id
+
+    client.post(
+        "/login",
+        data={
+            "email": "forumstudent@mitwpu.edu.in",
+            "password": "Valid@123",
+        },
+    )
+
+    response = client.post(
+        "/forum/new",
+        data={
+            "title": "Need help with DBMS",
+            "content": "Can someone explain normalization?",
+        },
+        follow_redirects=False,
+    )
+
+    assert response.status_code == 302
+
+    with app.app_context():
+        post = DiscussionPost.query.filter_by(
+            user_id=user_id,
+            title="Need help with DBMS",
+        ).first()
+
+        assert post is not None
+        assert "normalization" in post.content
+
+
+def test_add_forum_comment(client, app):
+    from app.models import User, DiscussionPost, Comment
+    from app import db
+
+    with app.app_context():
+        author = User(
+            name="Post Author",
+            email="postauthor@mitwpu.edu.in",
+            is_verified=True,
+        )
+        author.set_password("Valid@123")
+
+        commenter = User(
+            name="Forum Commenter",
+            email="forumcommenter@mitwpu.edu.in",
+            is_verified=True,
+        )
+        commenter.set_password("Valid@123")
+
+        db.session.add_all([author, commenter])
+        db.session.commit()
+
+        post = DiscussionPost(
+            user_id=author.id,
+            title="Dynamic Programming",
+            content="How does dynamic programming work?",
+        )
+
+        db.session.add(post)
+        db.session.commit()
+
+        post_id = post.id
+        commenter_id = commenter.id
+
+    client.post(
+        "/login",
+        data={
+            "email": "forumcommenter@mitwpu.edu.in",
+            "password": "Valid@123",
+        },
+    )
+
+    response = client.post(
+        f"/forum/{post_id}/comment",
+        data={
+            "content": "It stores solutions to repeated subproblems."
+        },
+        follow_redirects=False,
+    )
+
+    assert response.status_code == 302
+
+    with app.app_context():
+        comment = Comment.query.filter_by(
+            post_id=post_id,
+            user_id=commenter_id,
+        ).first()
+
+        assert comment is not None
+        assert "repeated subproblems" in comment.content
+
+
+def test_resource_upload_and_download(client, app, tmp_path):
+    from app.models import User, Resource
+    from app import db
+
+    app.config["UPLOAD_FOLDER"] = str(tmp_path)
+
+    with app.app_context():
+        user = User(
+            name="Resource Student",
+            email="resource@mitwpu.edu.in",
+            is_verified=True,
+        )
+        user.set_password("Valid@123")
+
+        db.session.add(user)
+        db.session.commit()
+
+        user_id = user.id
+
+    client.post(
+        "/login",
+        data={
+            "email": "resource@mitwpu.edu.in",
+            "password": "Valid@123",
+        },
+    )
+
+    response = client.post(
+        "/resources/upload",
+        data={
+            "title": "DBMS Test Notes",
+            "subject": "DBMS",
+            "description": "Normalization notes",
+            "file": (
+                io.BytesIO(b"Test DBMS resource content"),
+                "dbms_notes.txt",
+            ),
+        },
+        content_type="multipart/form-data",
+        follow_redirects=False,
+    )
+
+    assert response.status_code == 302
+
+    with app.app_context():
+        resource = Resource.query.filter_by(
+            user_id=user_id,
+            title="DBMS Test Notes",
+        ).first()
+
+        assert resource is not None
+        resource_id = resource.id
+
+    response = client.get(
+        f"/resources/download/{resource_id}"
+    )
+
+    assert response.status_code == 200
+    assert b"Test DBMS resource content" in response.data
+
+
+def test_student_cannot_access_admin(client, app):
+    from app.models import User
+    from app import db
+
+    with app.app_context():
+        student = User(
+            name="Normal Student",
+            email="normalstudent@mitwpu.edu.in",
+            role="student",
+            is_verified=True,
+        )
+        student.set_password("Valid@123")
+
+        db.session.add(student)
+        db.session.commit()
+
+    client.post(
+        "/login",
+        data={
+            "email": "normalstudent@mitwpu.edu.in",
+            "password": "Valid@123",
+        },
+    )
+
+    response = client.get("/admin")
+
+    assert response.status_code == 403
+
+
+def test_admin_can_access_panel(client, app):
+    from app.models import User
+    from app import db
+
+    with app.app_context():
+        admin = User(
+            name="Test Admin",
+            email="testadmin@mitwpu.edu.in",
+            role="admin",
+            is_verified=True,
+        )
+        admin.set_password("Admin@123")
+
+        db.session.add(admin)
+        db.session.commit()
+
+    client.post(
+        "/login",
+        data={
+            "email": "testadmin@mitwpu.edu.in",
+            "password": "Admin@123",
+        },
+    )
+
+    response = client.get("/admin")
+
+    assert response.status_code == 200
+    assert b"Admin Dashboard" in response.data
+
+
+def test_admin_suspend_and_unsuspend_user(client, app):
+    from app.models import User
+    from app import db
+
+    with app.app_context():
+        admin = User(
+            name="Admin User",
+            email="adminuser@mitwpu.edu.in",
+            role="admin",
+            is_verified=True,
+        )
+        admin.set_password("Admin@123")
+
+        student = User(
+            name="Student User",
+            email="studentuser@mitwpu.edu.in",
+            role="student",
+            is_verified=True,
+        )
+        student.set_password("Valid@123")
+
+        db.session.add_all([admin, student])
+        db.session.commit()
+
+        student_id = student.id
+
+    client.post(
+        "/login",
+        data={
+            "email": "adminuser@mitwpu.edu.in",
+            "password": "Admin@123",
+        },
+    )
+
+    response = client.post(
+        f"/admin/suspend/{student_id}",
+        follow_redirects=False,
+    )
+
+    assert response.status_code == 302
+
+    with app.app_context():
+        student = db.session.get(User, student_id)
+        assert student.is_suspended is True
+
+    response = client.post(
+        f"/admin/unsuspend/{student_id}",
+        follow_redirects=False,
+    )
+
+    assert response.status_code == 302
+
+    with app.app_context():
+        student = db.session.get(User, student_id)
+        assert student.is_suspended is False
+
+
+def test_admin_verify_user(client, app):
+    from app.models import User
+    from app import db
+
+    with app.app_context():
+        admin = User(
+            name="Verification Admin",
+            email="verificationadmin@mitwpu.edu.in",
+            role="admin",
+            is_verified=True,
+        )
+        admin.set_password("Admin@123")
+
+        student = User(
+            name="Unverified User",
+            email="verifyme@mitwpu.edu.in",
+            role="student",
+            is_verified=False,
+        )
+        student.set_password("Valid@123")
+
+        db.session.add_all([admin, student])
+        db.session.commit()
+
+        student_id = student.id
+
+    client.post(
+        "/login",
+        data={
+            "email": "verificationadmin@mitwpu.edu.in",
+            "password": "Admin@123",
+        },
+    )
+
+    response = client.post(
+        f"/admin/verify/{student_id}",
+        follow_redirects=False,
+    )
+
+    assert response.status_code == 302
+
+    with app.app_context():
+        student = db.session.get(User, student_id)
+        assert student.is_verified is True

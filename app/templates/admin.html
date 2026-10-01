@@ -1,0 +1,236 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Admin Dashboard 🛡️</h2>
+
+<p>
+    Manage Study Buddy student accounts.
+</p>
+
+<hr>
+
+<h3>Platform Overview</h3>
+
+<div style="
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+">
+
+    <div style="
+        border: 1px solid #ccc;
+        padding: 20px;
+        width: 160px;
+    ">
+        <h4>Total Users</h4>
+        <h2>{{ total_users }}</h2>
+    </div>
+
+
+    <div style="
+        border: 1px solid #ccc;
+        padding: 20px;
+        width: 160px;
+    ">
+        <h4>Verified</h4>
+        <h2>{{ verified_users }}</h2>
+    </div>
+
+
+    <div style="
+        border: 1px solid #ccc;
+        padding: 20px;
+        width: 160px;
+    ">
+        <h4>Unverified</h4>
+        <h2>{{ unverified_users }}</h2>
+    </div>
+
+
+    <div style="
+        border: 1px solid #ccc;
+        padding: 20px;
+        width: 160px;
+    ">
+        <h4>Suspended</h4>
+        <h2>{{ suspended_users }}</h2>
+    </div>
+
+</div>
+
+<hr>
+
+<h3>User Management</h3>
+
+{% if users %}
+
+<table
+    border="1"
+    cellpadding="10"
+    cellspacing="0"
+    style="width: 100%;"
+>
+
+    <thead>
+
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Department</th>
+            <th>Year</th>
+            <th>Role</th>
+            <th>Verified</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        {% for user in users %}
+
+        <tr>
+
+            <td>
+                {{ user.name }}
+            </td>
+
+            <td>
+                {{ user.email }}
+            </td>
+
+            <td>
+                {{ user.department or "-" }}
+            </td>
+
+            <td>
+                {{ user.year or "-" }}
+            </td>
+
+            <td>
+                {{ user.role|capitalize }}
+            </td>
+
+            <td>
+
+                {% if user.is_verified %}
+
+                    Yes
+
+                {% else %}
+
+                    No
+
+                {% endif %}
+
+            </td>
+
+            <td>
+
+                {% if user.is_suspended %}
+
+                    Suspended
+
+                {% else %}
+
+                    Active
+
+                {% endif %}
+
+            </td>
+
+            <td>
+
+                {% if not user.is_verified %}
+
+                    <form
+                        method="POST"
+                        action="{{ url_for(
+                            'admin.verify_user',
+                            user_id=user.id
+                        ) }}"
+                        style="display: inline;"
+                    >
+
+                        <button type="submit">
+                            Verify
+                        </button>
+
+                    </form>
+
+                {% endif %}
+
+
+                {% if user.id != current_user.id %}
+
+                    {% if user.is_suspended %}
+
+                        <form
+                            method="POST"
+                            action="{{ url_for(
+                                'admin.unsuspend_user',
+                                user_id=user.id
+                            ) }}"
+                            style="display: inline;"
+                        >
+
+                            <button type="submit">
+                                Reactivate
+                            </button>
+
+                        </form>
+
+                    {% else %}
+
+                        <form
+                            method="POST"
+                            action="{{ url_for(
+                                'admin.suspend_user',
+                                user_id=user.id
+                            ) }}"
+                            style="display: inline;"
+                        >
+
+                            <button type="submit">
+                                Suspend
+                            </button>
+
+                        </form>
+
+                    {% endif %}
+
+                {% else %}
+
+                    Current Admin
+
+                {% endif %}
+
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% else %}
+
+<p>
+    No users found.
+</p>
+
+{% endif %}
+
+<hr>
+
+<p>
+    <a href="{{ url_for('dashboard.home') }}">
+        ← Back to Dashboard
+    </a>
+</p>
+
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Welcome, {{ current_user.name }} 👋</h2>
+<p>Your Study Buddy dashboard</p>
+
+<hr>
+
+<h3>Overview</h3>
+
+<div style="display: flex; gap: 20px; flex-wrap: wrap;">
+
+    <div style="border: 1px solid #ccc; padding: 20px; width: 180px;">
+        <h4>Joined Sessions</h4>
+        <h2>{{ joined_sessions|length }}</h2>
+    </div>
+
+    <div style="border: 1px solid #ccc; padding: 20px; width: 180px;">
+        <h4>Created Sessions</h4>
+        <h2>{{ created_sessions|length }}</h2>
+    </div>
+
+    <div style="border: 1px solid #ccc; padding: 20px; width: 180px;">
+        <h4>Unread Notifications</h4>
+        <h2>{{ unread_notifications }}</h2>
+    </div>
+
+    <div style="border: 1px solid #ccc; padding: 20px; width: 180px;">
+        <h4>Open SOS</h4>
+        <h2>{{ open_sos }}</h2>
+    </div>
+
+</div>
+
+<hr>
+
+<h3>My Active Study Sessions</h3>
+
+{% if joined_sessions %}
+
+    {% for session in joined_sessions %}
+
+        <div style="border: 1px solid #ddd; padding: 15px; margin-bottom: 10px;">
+
+            <strong>{{ session.subject }}</strong>
+
+            <p>
+                Date: {{ session.date }} <br>
+                Time: {{ session.time }} <br>
+                Venue: {{ session.venue }}
+            </p>
+
+            <a href="{{ url_for('study_sessions.detail', sid=session.id) }}">
+                View Session
+            </a>
+
+        </div>
+
+    {% endfor %}
+
+{% else %}
+
+    <p>You have not joined any active study sessions.</p>
+
+{% endif %}
+
+<hr>
+
+<h3>Quick Actions</h3>
+
+<p>
+    <a href="{{ url_for('study_sessions.create') }}">
+        Create Study Session
+    </a>
+</p>
+
+<p>
+    <a href="{{ url_for('study_sessions.list_sessions') }}">
+        Browse Study Sessions
+    </a>
+</p>
+
+<p>
+    <a href="{{ url_for('notifications.list_notifications') }}">
+        View Notifications
+    </a>
+</p>
+
+{% endblock %}

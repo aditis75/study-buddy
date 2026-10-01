@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Create Discussion 💬</h2>
+
+<p>
+    Ask a question or start a discussion with other students.
+</p>
+
+<hr>
+
+<form method="POST">
+
+    <label for="title">
+        <strong>Discussion Title</strong>
+    </label>
+
+    <br>
+
+    <input
+        type="text"
+        id="title"
+        name="title"
+        placeholder="Example: Help with Dynamic Programming"
+        required
+        style="width: 100%; max-width: 600px;"
+    >
+
+    <br><br>
+
+    <label for="content">
+        <strong>Your Question / Discussion</strong>
+    </label>
+
+    <br>
+
+    <textarea
+        id="content"
+        name="content"
+        rows="8"
+        placeholder="Describe your question or topic..."
+        required
+        style="width: 100%; max-width: 600px;"
+    ></textarea>
+
+    <br><br>
+
+    <button type="submit">
+        Post Discussion
+    </button>
+
+</form>
+
+<hr>
+
+<p>
+    <a href="{{ url_for('forum.list_posts') }}">
+        ← Back to Forum
+    </a>
+</p>
+
+{% endblock %}
