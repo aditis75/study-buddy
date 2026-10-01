@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block title %}Session Details{% endblock %}
+
+{% block content %}
+
+<h2>{{ session.subject }}</h2>
+
+<p><strong>Date:</strong> {{ session.date }}</p>
+<p><strong>Time:</strong> {{ session.time }}</p>
+<p><strong>Venue:</strong> {{ session.venue }}</p>
+<p><strong>Status:</strong> {{ session.status }}</p>
+
+{% if session.status == "active" %}
+
+<form method="post"
+      action="{{ url_for('study_sessions.join', sid=session.id) }}"
+      class="d-inline">
+    <button class="btn btn-success">Join</button>
+</form>
+
+<form method="post"
+      action="{{ url_for('study_sessions.leave', sid=session.id) }}"
+      class="d-inline">
+    <button class="btn btn-outline-secondary">Leave</button>
+</form>
+
+{% endif %}
+
+{% if current_user.id == session.creator_id %}
+
+<a class="btn btn-warning"
+   href="{{ url_for('study_sessions.edit', sid=session.id) }}">
+    Edit
+</a>
+
+<form method="post"
+      action="{{ url_for('study_sessions.cancel', sid=session.id) }}"
+      class="d-inline">
+
+    <button class="btn btn-danger">
+        Cancel
+    </button>
+
+</form>
+
+{% endif %}
+
+<hr>
+
+<h4>Participants</h4>
+
+<ul>
+{% for p in participants %}
+    <li>User ID: {{ p.user_id }}</li>
+{% else %}
+    <li>No participants.</li>
+{% endfor %}
+</ul>
+
+<hr>
+
+<h4>🚨 SOS Requests</h4>
+
+{% if sos_requests %}
+
+    {% for sos in sos_requests %}
+
+    <div class="card mb-3 border-danger">
+
+        <div class="card-body">
+
+            <h5 class="text-danger">
+                🚨 Urgent Help Request
+            </h5>
+
+            <p>
+                <strong>Student ID:</strong>
+                {{ sos.requester_id }}
+            </p>
+
+            <p>
+                <strong>Doubt:</strong>
+                {{ sos.message }}
+            </p>
+
+            <p>
+                <strong>Status:</strong>
+                {{ sos.status }}
+            </p>
+
+            {% if sos.status == "open" %}
+
+                {% if current_user.id != sos.requester_id %}
+
+                <form method="post"
+                      action="{{ url_for('sos.help_request', rid=sos.id) }}"
+                      class="d-inline">
+
+                    <button class="btn btn-success">
+                        🙋 I Can Help
+                    </button>
+
+                </form>
+
+                {% else %}
+
+                <form method="post"
+                      action="{{ url_for('sos.resolve', rid=sos.id) }}"
+                      class="d-inline">
+
+                    <button class="btn btn-primary">
+                        ✓ Mark Resolved
+                    </button>
+
+                </form>
+
+                {% endif %}
+
+            {% else %}
+
+                <span class="badge bg-success">
+                    Resolved
+                </span>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+{% else %}
+
+<p class="text-muted">
+    No active SOS requests.
+</p>
+
+{% endif %}
+
+<hr>
+
+<h4>🚨 Need urgent help?</h4>
+
+<form method="post"
+      action="{{ url_for('sos.raise_sos', sid=session.id) }}">
+
+    <textarea
+        class="form-control mb-2"
+        name="message"
+        placeholder="Describe your doubt"
+        required>
+    </textarea>
+
+    <button class="btn btn-danger">
+        Send SOS
+    </button>
+
+</form>
+
+{% endblock %}

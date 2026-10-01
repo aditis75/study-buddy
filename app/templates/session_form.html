@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Study Session{% endblock %}
+{% block content %}
+<h2>{{ "Edit" if session else "Create" }} Study Session</h2>
+<form method="post">
+  <input class="form-control mb-3" name="subject" value="{{ session.subject if session else '' }}" placeholder="Subject" required>
+  <input class="form-control mb-3" name="date" value="{{ session.date if session else '' }}" placeholder="Date" required>
+  <input class="form-control mb-3" name="time" value="{{ session.time if session else '' }}" placeholder="Time" required>
+  <input class="form-control mb-3" name="venue" value="{{ session.venue if session else '' }}" placeholder="Venue" required>
+  <input class="form-control mb-3" name="max_participants" type="number" min="2" value="{{ session.max_participants if session else 5 }}" placeholder="Maximum participants" required>
+  <button class="btn btn-primary">Save</button>
+</form>
+{% endblock %}
